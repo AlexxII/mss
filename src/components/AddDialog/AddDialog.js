@@ -109,6 +109,8 @@ const AddDialog = ({ open, setOpen, save }) => {
                 id="datetime-local"
                 label="Deadline"
                 type="datetime-local"
+
+                
                 // defaultValue={new Date().toISOString()}
                 className={classes.textField}
                 InputLabelProps={{
