@@ -6,7 +6,8 @@ import AddDialog from '../../components/AddDialog'
 const Main = () => {
   const [open, setOpen] = useState(false)
 
-  const handleEventAdd = () => {
+  const handleEventAdd = (data) => {
+    console.log(data);
     setOpen(false)
   }
 

@@ -13,7 +13,6 @@ import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
-import userEvent from '@testing-library/user-event';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -35,12 +34,13 @@ const useStyles = makeStyles((theme) => ({
 const AddDialog = ({ open, setOpen, save }) => {
   const classes = useStyles();
   const [eventData, setEventData] = useState({
-    tlgReport: true,
+    tlfReport: true,
     shtReport: true
   })
 
   const handleSave = (e) => {
     e.preventDefault()
+    console.log(eventData);
   }
 
   return (
@@ -129,12 +129,12 @@ const AddDialog = ({ open, setOpen, save }) => {
             <FormControl className={classes.formControl}>
               <FormControlLabel
                 control={<Checkbox
-                  checked={userEvent.tlgReport}
+                  checked={eventData.tlfReport}
                   onChange={(e) => {
                     setEventData(
                       {
                         ...eventData,
-                        tlgReport: e.currentTarget.checked
+                        tlfReport: e.currentTarget.checked
                       }
                     )
                   }}
@@ -144,7 +144,7 @@ const AddDialog = ({ open, setOpen, save }) => {
               />
               <FormControlLabel
                 control={<Checkbox
-                  checked={true}
+                  checked={eventData.shtReport}
                   onChange={(e) => {
                     setEventData(
                       {
