@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -33,24 +33,34 @@ const useStyles = makeStyles((theme) => ({
 
 const AddDialog = ({ open, setOpen, save }) => {
   const classes = useStyles();
-  const [eventData, setEventData] = useState({
-    tlfReport: true,
-    shtReport: true
-  })
+  const [eventData, setEventData] = useState(null)
 
   const handleSave = (e) => {
     e.preventDefault()
-    console.log(eventData);
+    save(eventData)
   }
+
+  useEffect(() => {
+    var dateTime = new Date()
+    dateTime.setTime(dateTime.getTime() - dateTime.getTimezoneOffset() * 60 * 1000)
+    const date = dateTime.toISOString().slice(0, 16)
+    setEventData({
+      startDate: date,
+      tlfReport: true,
+      shtReport: true
+    })
+  }, [])
+
+  if (!eventData) return null
 
   return (
     <div>
       <Dialog
         open={open}
-        onClose={() => setOpen(false)}
+        // onClose={() => setOpen(false)}
         maxWidth={"md"}
       >
-        <form onSubmit={() => handleSave()}>
+        <form onSubmit={handleSave}>
           <DialogTitle style={{ padding: '16px 24px 0 24px' }} id="form-dialog-title">Добавить вводную</DialogTitle>
           <DialogContent>
             <FormControl className={classes.formControl} fullWidth>
@@ -71,7 +81,7 @@ const AddDialog = ({ open, setOpen, save }) => {
                   )
                 }}
               >
-                <option aria-label="None" value="" />
+                <option aria-label="None" value=""/>
                 <option value={10}>Вводная 1</option>
                 <option value={20}>Вводная 2</option>
                 <option value={30}>Вводная 3</option>
@@ -90,7 +100,7 @@ const AddDialog = ({ open, setOpen, save }) => {
                 id="datetime-local"
                 label="Время получения"
                 type="datetime-local"
-                // defaultValue={new Date().toISOString()}
+                defaultValue={eventData.startDate}
                 className={classes.textField}
                 InputLabelProps={{
                   shrink: true,
@@ -109,9 +119,6 @@ const AddDialog = ({ open, setOpen, save }) => {
                 id="datetime-local"
                 label="Deadline"
                 type="datetime-local"
-
-                
-                // defaultValue={new Date().toISOString()}
                 className={classes.textField}
                 InputLabelProps={{
                   shrink: true,
@@ -120,7 +127,7 @@ const AddDialog = ({ open, setOpen, save }) => {
                   setEventData(
                     {
                       ...eventData,
-                      endTime: e.currentTarget.value
+                      endDate: e.currentTarget.value
                     }
                   )
                 }}

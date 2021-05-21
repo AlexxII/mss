@@ -2,19 +2,22 @@ import React, { Fragment, useState } from 'react'
 
 import SpeedAdd from '../../components/SpeedAdd'
 import AddDialog from '../../components/AddDialog'
+import EventChain from '../../components/EventChain'
 
 const Main = () => {
   const [open, setOpen] = useState(false)
 
   const handleEventAdd = (data) => {
-    console.log(data);
     setOpen(false)
   }
 
   return (
     <Fragment>
-      <AddDialog open={open} setOpen={setOpen} save={handleEventAdd} />
-      <SpeedAdd openAddDialog={() => setOpen(true)} />
+      <div className="main-wrap">
+        <EventChain />
+        <AddDialog open={open} setOpen={setOpen} save={handleEventAdd} />
+        <SpeedAdd setAddOpen={() => setOpen(true)} />
+      </div>
     </Fragment>
   )
 }

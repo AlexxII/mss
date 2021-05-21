@@ -1,0 +1,11 @@
+@import './components/EventBox/eventbox.scss';
+@import './components/EventChain/eventchain.scss';
+
+@import './modules/Main/main.scss';
+
+html,
+body,
+#root,
+.App {
+  height: 100%
+}

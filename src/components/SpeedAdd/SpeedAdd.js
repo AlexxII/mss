@@ -17,7 +17,7 @@ const actions = [
   { icon: <SaveIcon />, name: 'Сохранить' },
 ];
 
-const SpeedAdd = ({ openAddDialog }) => {
+const SpeedAdd = ({ setAddOpen }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -31,7 +31,7 @@ const SpeedAdd = ({ openAddDialog }) => {
 
   const handleNew = () => {
     setOpen(false)
-    openAddDialog()
+    setAddOpen()
   }
 
   return (
