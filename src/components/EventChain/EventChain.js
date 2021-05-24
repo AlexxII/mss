@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ReactFlow from 'react-flow-renderer';
 
-
 const Tt = () => {
   const [tm, seTm] = useState(900)
 
@@ -26,28 +25,28 @@ const elements = [
     id: '1',
     type: 'input',
     data: { label: <Tt /> },
-    position: { x: 250, y: 100 },
+    position: { x: 50, y: 100 },
     draggable: false,
     sourcePosition: 'right'
   },
   {
     id: '2',
     data: { label: <div>ОСС</div> },
-    position: { x: 550, y: 45 },
+    position: { x: 350, y: 45 },
     targetPosition: 'left',
     sourcePosition: 'right'
   },
   {
     id: '3',
     data: { label: <div>ПТС</div> },
-    position: { x: 850, y: 45 },
+    position: { x: 650, y: 45 },
     targetPosition: 'left',
     sourcePosition: 'right'
   },
   {
     id: '4',
     data: { label: <div>Письменный доклад</div> },
-    position: { x: 1150, y: 45 },
+    position: { x: 950, y: 45 },
     targetPosition: 'left',
     sourcePosition: 'right'
   },
@@ -55,14 +54,14 @@ const elements = [
     id: '5',
     data: { label: 'ЗАКОНЧИТЬ' },
     type: 'output',
-    position: { x: 1500, y: 45 },
+    position: { x: 1300, y: 45 },
     targetPosition: 'left',
     sourcePosition: 'right'
   },
   {
     id: '6',
     data: { label: <div>ПТС</div> },
-    position: { x: 550, y: 185 },
+    position: { x: 350, y: 185 },
     targetPosition: 'left',
     sourcePosition: 'right'
   },
@@ -70,7 +69,7 @@ const elements = [
     id: '7',
     type: 'output',
     data: { label: 'ЗАКОНЧИТЬ' },
-    position: { x: 850, y: 185 },
+    position: { x: 650, y: 185 },
     targetPosition: 'left',
 
   },
