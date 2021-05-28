@@ -14,6 +14,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
@@ -34,18 +35,39 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const AddSubeventForm = ({ setEventData, eventData }) => {
+const AddSubeventForm = ({ first, setEventData, eventData, id }) => {
   const classes = useStyles();
+  console.log(id);
+
+  const addEvent = () => {
+    setEventData((prevState) => ([
+      ...prevState,
+      { id: Math.random() * 100 + '' }
+    ]))
+  }
+
+  const subEvent = () => {
+    setEventData((prevState) => {
+      console.log(prevState);
+      return prevState.filter(item => (item.id !== id))
+    })
+  }
 
   return (
     <div className="event-type-details">
+    {id}
       <IconButton
         className="add-subevent-button"
         color="primary"
         aria-label="upload picture"
         component="span"
       >
-        <AddCircleOutlineIcon />
+        {
+          first ?
+            <AddCircleOutlineIcon onClick={addEvent} />
+            :
+            <HighlightOffIcon onClick={subEvent} />
+        }
       </IconButton>
       <FormControl className={classes.formControl} fullWidth>
         <InputLabel htmlFor="age-native-helper">Тип вводной</InputLabel>
@@ -125,15 +147,21 @@ const AddDialog = ({ open, setOpen, save }) => {
   }
 
   useEffect(() => {
-    var dateTime = new Date()
-    dateTime.setTime(dateTime.getTime() - dateTime.getTimezoneOffset() * 60 * 1000)
-    const date = dateTime.toISOString().slice(0, 16)
-    setEventData({
-      startDate: date,
-      tlfReport: true,
-      shtReport: true
-    })
+    setEventData([{
+      id: '1'
+    }])
   }, [])
+
+  // useEffect(() => {
+  //   var dateTime = new Date()
+  //   dateTime.setTime(dateTime.getTime() - dateTime.getTimezoneOffset() * 60 * 1000)
+  //   const date = dateTime.toISOString().slice(0, 16)
+  //   setEventData([{
+  //     startDate: date,
+  //     tlfReport: true,
+  //     shtReport: true
+  //   }])
+  // }, [])
 
   if (!eventData) return null
 
@@ -174,7 +202,9 @@ const AddDialog = ({ open, setOpen, save }) => {
                 )
               }}
             />
-            <AddSubeventForm />
+            {eventData.map((item, index) => (
+              <AddSubeventForm setEventData={setEventData} first={index === 0} id={item.id} />
+            ))}
             <FormControl className={classes.formControl} fullWidth>
               <TextField
                 InputLabelProps={{
