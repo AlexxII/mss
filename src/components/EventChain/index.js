@@ -1,1 +1,1 @@
-export { default } from './EventChain'
+export { default } from './EventChainEx'

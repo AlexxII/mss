@@ -47,10 +47,7 @@ const layoutedElements = getLayoutedElements(initialElements);
 
 const LayoutFlow = () => {
   const [elements, setElements] = useState(layoutedElements);
-  const onConnect = (params) =>
-    setElements((els) =>
-      addEdge({ ...params, type: 'smoothstep', animated: true }, els)
-    );
+
   const onLayout = useCallback(
     (direction) => {
       const layoutedElements = getLayoutedElements(elements, direction);
@@ -63,7 +60,7 @@ const LayoutFlow = () => {
     <div className="event-chain">
       <ReactFlow
         elements={elements}
-        onConnect={onConnect}
+        // onConnect={onConnect}
         connectionLineType="smoothstep"
       />
     </div>
