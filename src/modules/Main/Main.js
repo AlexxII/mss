@@ -8,6 +8,8 @@ const Main = () => {
   const [open, setOpen] = useState(false)
 
   const handleEventAdd = (data) => {
+
+    console.log(data);
     setOpen(false)
   }
 

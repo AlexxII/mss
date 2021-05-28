@@ -10,7 +10,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormLabel from '@material-ui/core/FormLabel';
 import NativeSelect from '@material-ui/core/NativeSelect';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid } from '@material-ui/core';
 
@@ -29,6 +33,86 @@ const useStyles = makeStyles((theme) => ({
     width: '200px'
   }
 }));
+
+const AddSubeventForm = ({ setEventData, eventData }) => {
+  const classes = useStyles();
+
+  return (
+    <div className="event-type-details">
+      <IconButton
+        className="add-subevent-button"
+        color="primary"
+        aria-label="upload picture"
+        component="span"
+      >
+        <AddCircleOutlineIcon />
+      </IconButton>
+      <FormControl className={classes.formControl} fullWidth>
+        <InputLabel htmlFor="age-native-helper">Тип вводной</InputLabel>
+        <NativeSelect
+          value={null}
+          required
+          inputProps={{
+            name: 'age',
+            id: 'age-native-helper',
+          }}
+          onChange={(e) => {
+            setEventData(
+              {
+                ...eventData,
+                eventType: e.currentTarget.value
+              }
+            )
+          }}
+        >
+          <option aria-label="None" value="" />
+          <option value={10}>ОСС</option>
+          <option value={20}>СИО</option>
+          <option value={30}>ИБ</option>
+        </NativeSelect>
+      </FormControl>
+      <div style={{ paddingTop: '10px' }}>
+        <span style={{ paddingRight: '20px' }}>
+          <TextField
+            required
+            id="datetime-local"
+            label="Deadline"
+            type="datetime-local"
+            className={classes.textField}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={(e) => {
+              setEventData(
+                {
+                  ...eventData,
+                  endDate: e.currentTarget.value
+                }
+              )
+            }}
+          />
+        </span>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Доклад</FormLabel>
+          <FormGroup aria-label="position" row>
+            <FormControlLabel
+              value="top"
+              control={<Checkbox color="secondary" />}
+              label="ПТС"
+              labelPlacement="right"
+            />
+            <FormControlLabel
+              value="start"
+              control={<Checkbox color="secondary" />}
+              label="ШТ"
+              labelPlacement="right"
+            />
+          </FormGroup>
+        </FormControl>
+      </div>
+    </div>
+  )
+}
 
 
 const AddDialog = ({ open, setOpen, save }) => {
@@ -64,106 +148,33 @@ const AddDialog = ({ open, setOpen, save }) => {
           <DialogTitle style={{ padding: '16px 24px 0 24px' }} id="form-dialog-title">Добавить вводную</DialogTitle>
           <DialogContent>
             <FormControl className={classes.formControl} fullWidth>
-              <InputLabel htmlFor="age-native-helper">Тип вводной</InputLabel>
-              <NativeSelect
-                value={null}
-                required
-                inputProps={{
-                  name: 'age',
-                  id: 'age-native-helper',
-                }}
-                onChange={(e) => {
-                  setEventData(
-                    {
-                      ...eventData,
-                      eventType: e.currentTarget.value
-                    }
-                  )
-                }}
-              >
-                <option aria-label="None" value=""/>
-                <option value={10}>Вводная 1</option>
-                <option value={20}>Вводная 2</option>
-                <option value={30}>Вводная 3</option>
-                <option value={40}>Вводная 4</option>
-                <option value={50}>Вводная 5</option>
-                <option value={60}>Вводная 6</option>
-                <option value={70}>Вводная 7</option>
-                <option value={80}>Вводная 8</option>
-                <option value={90}>Вводная 9</option>
-              </NativeSelect>
-              <FormHelperText>Выберите тип вводной</FormHelperText>
-            </FormControl>
-            <Grid container justify="space-around" spacing={2} className={classes.timeforms}>
               <TextField
-                required
-                id="datetime-local"
-                label="Время получения"
-                type="datetime-local"
-                defaultValue={eventData.startDate}
-                className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={(e) => {
-                  setEventData(
-                    {
-                      ...eventData,
-                      inputTime: e.currentTarget.value
-                    }
-                  )
-                }}
+                fullWidth
+                id="standard-basic"
+                label="Наименование"
               />
-              <TextField
-                required
-                id="datetime-local"
-                label="Deadline"
-                type="datetime-local"
-                className={classes.textField}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                onChange={(e) => {
-                  setEventData(
-                    {
-                      ...eventData,
-                      endDate: e.currentTarget.value
-                    }
-                  )
-                }}
-              />
-            </Grid>
-            <FormControl className={classes.formControl}>
-              <FormControlLabel
-                control={<Checkbox
-                  checked={eventData.tlfReport}
-                  onChange={(e) => {
-                    setEventData(
-                      {
-                        ...eventData,
-                        tlfReport: e.currentTarget.checked
-                      }
-                    )
-                  }}
-                  name="tlg" />
-                }
-                label="Доклад по телефону"
-              />
-              <FormControlLabel
-                control={<Checkbox
-                  checked={eventData.shtReport}
-                  onChange={(e) => {
-                    setEventData(
-                      {
-                        ...eventData,
-                        shtReport: e.currentTarget.checked
-                      }
-                    )
-                  }}
-                  name="sht" />}
-                label="Шифротелеграмма"
-              />
+              <FormHelperText>Укажите наименование вводной</FormHelperText>
             </FormControl>
+            <TextField
+              required
+              id="datetime-local"
+              label="Время получения"
+              type="datetime-local"
+              defaultValue={eventData.startDate}
+              className={classes.textField}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              onChange={(e) => {
+                setEventData(
+                  {
+                    ...eventData,
+                    inputTime: e.currentTarget.value
+                  }
+                )
+              }}
+            />
+            <AddSubeventForm />
             <FormControl className={classes.formControl} fullWidth>
               <TextField
                 InputLabelProps={{

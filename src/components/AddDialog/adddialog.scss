@@ -1,0 +1,13 @@
+.event-type-details {
+  border-radius: 4px;
+  border: #000 dashed 1px;
+  margin: 10px -10px 10px -10px;
+  padding: 10px 20px 10px 10px;
+  position: relative;
+}
+.add-subevent-button {
+  position: absolute !important;
+  top: -10px;
+  right: -10px;
+  cursor: pointer;
+}
