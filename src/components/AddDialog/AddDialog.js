@@ -5,19 +5,11 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormLabel from '@material-ui/core/FormLabel';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
+import { v4 as uuidv4 } from 'uuid';
+
+import SubEventForm from '../SubEventForm'
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -35,133 +27,64 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const AddSubeventForm = ({ first, setEventData, eventData, id }) => {
+
+
+const AddDialog = ({ open, save, close }) => {
   const classes = useStyles();
-  console.log(id);
 
-  const addEvent = () => {
-    setEventData((prevState) => ([
-      ...prevState,
-      { id: Math.random() * 100 + '' }
-    ]))
-  }
-
-  const subEvent = () => {
-    setEventData((prevState) => {
-      console.log(prevState);
-      return prevState.filter(item => (item.id !== id))
-    })
-  }
-
-  return (
-    <div className="event-type-details">
-    {id}
-      <IconButton
-        className="add-subevent-button"
-        color="primary"
-        aria-label="upload picture"
-        component="span"
-      >
-        {
-          first ?
-            <AddCircleOutlineIcon onClick={addEvent} />
-            :
-            <HighlightOffIcon onClick={subEvent} />
-        }
-      </IconButton>
-      <FormControl className={classes.formControl} fullWidth>
-        <InputLabel htmlFor="age-native-helper">Тип вводной</InputLabel>
-        <NativeSelect
-          value={null}
-          required
-          inputProps={{
-            name: 'age',
-            id: 'age-native-helper',
-          }}
-          onChange={(e) => {
-            setEventData(
-              {
-                ...eventData,
-                eventType: e.currentTarget.value
-              }
-            )
-          }}
-        >
-          <option aria-label="None" value="" />
-          <option value={10}>ОСС</option>
-          <option value={20}>СИО</option>
-          <option value={30}>ИБ</option>
-        </NativeSelect>
-      </FormControl>
-      <div style={{ paddingTop: '10px' }}>
-        <span style={{ paddingRight: '20px' }}>
-          <TextField
-            required
-            id="datetime-local"
-            label="Deadline"
-            type="datetime-local"
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={(e) => {
-              setEventData(
-                {
-                  ...eventData,
-                  endDate: e.currentTarget.value
-                }
-              )
-            }}
-          />
-        </span>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Доклад</FormLabel>
-          <FormGroup aria-label="position" row>
-            <FormControlLabel
-              value="top"
-              control={<Checkbox color="secondary" />}
-              label="ПТС"
-              labelPlacement="right"
-            />
-            <FormControlLabel
-              value="start"
-              control={<Checkbox color="secondary" />}
-              label="ШТ"
-              labelPlacement="right"
-            />
-          </FormGroup>
-        </FormControl>
-      </div>
-    </div>
-  )
-}
-
-
-const AddDialog = ({ open, setOpen, save }) => {
-  const classes = useStyles();
   const [eventData, setEventData] = useState(null)
+  const [subEvents, setSubEvents] = useState(null)
 
   const handleSave = (e) => {
     e.preventDefault()
-    save(eventData)
+    // обнуляем стейт
+    setSubEvents([{
+      id: uuidv4(),
+      type: 0,
+      tlfReport: false,
+      shtReport: false,
+      comments: '',
+      deadline: ''
+    }])
+    save({
+      main: eventData,
+      subEvents
+    })
   }
 
   useEffect(() => {
-    setEventData([{
-      id: '1'
+    setSubEvents([{
+      id: uuidv4(),
+      type: 0,
+      tlfReport: false,
+      shtReport: false,
+      comments: '',
+      deadline: ''
     }])
   }, [])
 
-  // useEffect(() => {
-  //   var dateTime = new Date()
-  //   dateTime.setTime(dateTime.getTime() - dateTime.getTimezoneOffset() * 60 * 1000)
-  //   const date = dateTime.toISOString().slice(0, 16)
-  //   setEventData([{
-  //     startDate: date,
-  //     tlfReport: true,
-  //     shtReport: true
-  //   }])
-  // }, [])
+  const handleClose = () => {
+    setSubEvents([{
+      id: uuidv4(),
+      type: 0,
+      tlfReport: false,
+      shtReport: false,
+      comments: '',
+      deadline: ''
+    }])
+    close()
+  }
+
+  useEffect(() => {
+    var dateTime = new Date()
+    dateTime.setTime(dateTime.getTime() - dateTime.getTimezoneOffset() * 60 * 1000)
+    const date = dateTime.toISOString().slice(0, 16)
+    setEventData({
+      startDate: date,
+      // tlfReport: true,
+      // shtReport: true
+    })
+  }, [])
 
   if (!eventData) return null
 
@@ -169,20 +92,28 @@ const AddDialog = ({ open, setOpen, save }) => {
     <div>
       <Dialog
         open={open}
-        // onClose={() => setOpen(false)}
-        maxWidth={"md"}
+        onClose={handleClose}
+        maxWidth={"sm"}
+        fullWidth
       >
         <form onSubmit={handleSave}>
           <DialogTitle style={{ padding: '16px 24px 0 24px' }} id="form-dialog-title">Добавить вводную</DialogTitle>
           <DialogContent>
             <FormControl className={classes.formControl} fullWidth>
               <TextField
+                required
                 fullWidth
                 id="standard-basic"
                 label="Наименование"
+                onChange={(e) => {
+                  setEventData(prevState => ({
+                    ...prevState,
+                    title: e.target.value
+                  }))
+                }}
               />
-              <FormHelperText>Укажите наименование вводной</FormHelperText>
             </FormControl>
+            <p></p>
             <TextField
               required
               id="datetime-local"
@@ -202,8 +133,8 @@ const AddDialog = ({ open, setOpen, save }) => {
                 )
               }}
             />
-            {eventData.map((item, index) => (
-              <AddSubeventForm setEventData={setEventData} first={index === 0} id={item.id} />
+            {subEvents.map((item, index) => (
+              <SubEventForm key={item.id} eventData={item} setSubEvents={setSubEvents} first={index === 0} index={index} />
             ))}
             <FormControl className={classes.formControl} fullWidth>
               <TextField
@@ -212,7 +143,7 @@ const AddDialog = ({ open, setOpen, save }) => {
                 }}
                 fullWidth
                 id="outlined-multiline-static"
-                label="Комментарии"
+                label="Комментарий"
                 multiline
                 rows={2}
                 variant="outlined"
@@ -228,7 +159,7 @@ const AddDialog = ({ open, setOpen, save }) => {
             </FormControl>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpen(false)} color="primary">
+            <Button onClick={handleClose} color="primary">
               Отмена
           </Button>
             <Button type="submit" color="primary">

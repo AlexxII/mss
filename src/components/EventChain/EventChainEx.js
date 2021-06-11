@@ -5,7 +5,7 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-import initialElements from './elements';
+import initialElements from './elementsEx';
 
 const nodeWidth = 172;
 const nodeHeight = 56;
@@ -26,7 +26,6 @@ const getLayoutedElements = (elements) => {
   });
 
   dagre.layout(dagreGraph);
-  console.log(dagreGraph);
 
   return elements.map((el) => {
     if (isNode(el)) {
@@ -43,9 +42,9 @@ const getLayoutedElements = (elements) => {
   });
 };
 
-const layoutedElements = getLayoutedElements(initialElements);
 
-const LayoutFlow = () => {
+const LayoutFlow = ({ events }) => {
+  const layoutedElements = getLayoutedElements(events);
   const [elements, setElements] = useState(layoutedElements);
 
   const onLayout = useCallback(
@@ -62,6 +61,7 @@ const LayoutFlow = () => {
         elements={elements}
         // onConnect={onConnect}
         connectionLineType="smoothstep"
+        zoomIn={false}
       />
     </div>
   );
