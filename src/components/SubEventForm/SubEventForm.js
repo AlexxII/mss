@@ -135,10 +135,6 @@ const SubEventForm = ({ first, setSubEvents, eventData, index }) => {
         <NativeSelect
           value={null}
           required
-          inputProps={{
-            name: 'age',
-            id: 'age-native-helper',
-          }}
           onChange={handleTypeChange}
         >
           <option aria-label="None" value="" />

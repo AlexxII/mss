@@ -8,7 +8,7 @@ import dagre from 'dagre';
 import initialElements from './elementsEx';
 
 const nodeWidth = 172;
-const nodeHeight = 56;
+const nodeHeight = 76;
 const RANFDIR = 'LR'
 
 const dagreGraph = new dagre.graphlib.Graph();
@@ -55,13 +55,24 @@ const LayoutFlow = ({ events }) => {
     [elements]
   );
 
+  const style = {
+    background: '#fff',
+    width: '100%',
+    height: '100%'
+  }
+
+  const handleEventClick = (_, node) => {
+    console.log(node);
+  }
+
   return (
     <div className="event-chain">
       <ReactFlow
+        style={style}
         elements={elements}
-        // onConnect={onConnect}
         connectionLineType="smoothstep"
         zoomIn={false}
+        onElementClick={handleEventClick}
       />
     </div>
   );

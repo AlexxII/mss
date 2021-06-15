@@ -6,18 +6,7 @@ import EventChain from '../../components/EventChain'
 import { v4 as uuidv4 } from 'uuid';
 import eventsTypes from '../../constants/inarray'
 
-
-const Tt = ({ data, title }) => {
-  console.log(data);
-  return (
-    <div>
-      <div style={{ fontWeight: '800' }}>
-        <p>{title}</p>
-        <span>{data?.comments ?? '-'}</span>
-      </div>
-    </div>
-  )
-}
+import BoxMain from '../../components/BoxMain'
 
 
 const Main = () => {
@@ -29,12 +18,10 @@ const Main = () => {
   }, {}))
 
   const handleEventAdd = (data) => {
-    console.log(data.main)
-    console.log(data.subEvents)
     const elements = []
     const adges = []
     setOpen(false)
-    const position = { x: 50, y: 50 };
+    const position = { x: 0, y: 0 };
     const edgeType = 'straight';
     // события
     const main = data.main
@@ -42,12 +29,14 @@ const Main = () => {
       id: uuidv4(),
       type: 'input',
       data: {
-        label: main.title,
+        label: <BoxMain data={main} />,
         comments: main.comments,
         date: main.date
       },
-      style: { backgroundColor: 'red' },
-      position: position
+      draggable: false,
+      selectable: false,
+      position: position,
+      className: "inputEvent"
     }
     const subEvents = data.subEvents
     const subEventsPool = subEvents.map((event, index) => {
@@ -64,6 +53,7 @@ const Main = () => {
         id: uuidv4(),
         type: 'output',
         data: { label: 'ФИНИШ' },
+        style: { backgroundColor: 'red', color: '#fff' },
         position
       }
       // ПТС - ШТ
@@ -82,7 +72,8 @@ const Main = () => {
           data: {
             label: 'ПТС'
           },
-          position: position
+          position: position,
+          style: { backgroundColor: 'red', color: '#fff' }
         })
         // начало - ШТ
         adges.push({
@@ -108,7 +99,8 @@ const Main = () => {
           data: {
             label: 'ШТ'
           },
-          position: position
+          position: position,
+          style: { backgroundColor: 'red', color: '#fff' }
         })
         // начало - ПТС
         adges.push({
@@ -134,14 +126,14 @@ const Main = () => {
         id: event.id,
         data: {
           eventId: event.type,
-          label: <Tt data={event} title={eTypes[event.type].title} />,
+          label: eTypes[event.type].title,
           deadline: event.deadline,
           comments: event.comments,
         },
+        style: { backgroundColor: 'red', color: '#fff' },
         position: position
       }
     })
-
     // цепочки
     const test = [
       firstNode,
@@ -149,7 +141,6 @@ const Main = () => {
       ...subEventsPool,
       ...adges
     ]
-    console.log(test);
     setEvents(test)
   }
 
