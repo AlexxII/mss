@@ -7,7 +7,7 @@ import dagre from 'dagre';
 
 import initialElements from './elementsEx';
 
-const nodeWidth = 172;
+const nodeWidth = 200;
 const nodeHeight = 76;
 const RANFDIR = 'LR'
 
