@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ReactFlow, {
   addEdge,
   isNode,
@@ -15,6 +15,7 @@ const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const getLayoutedElements = (elements) => {
+  console.log(elements);
   dagreGraph.setGraph({ rankdir: RANFDIR });
 
   elements.forEach((el) => {
@@ -43,17 +44,22 @@ const getLayoutedElements = (elements) => {
 };
 
 
-const LayoutFlow = ({ events }) => {
+const LayoutFlow = ({ events, newone }) => {
   const layoutedElements = getLayoutedElements(events);
   const [elements, setElements] = useState(layoutedElements);
 
   const onLayout = useCallback(
-    (direction) => {
-      const layoutedElements = getLayoutedElements(elements, direction);
+    (events) => {
+      console.log('2222222222');
+      const layoutedElements = getLayoutedElements(events);
       setElements(layoutedElements);
     },
     [elements]
   );
+
+  useEffect(() => {
+    onLayout(events)
+  }, [newone])
 
   const style = {
     background: '#fff',
@@ -72,7 +78,6 @@ const LayoutFlow = ({ events }) => {
         elements={elements}
         connectionLineType="smoothstep"
         zoomIn={false}
-        onElementClick={handleEventClick}
       />
     </div>
   );

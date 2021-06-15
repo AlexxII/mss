@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import InfoIcon from '@material-ui/icons/Info';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Typography from '@material-ui/core/Typography';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { makeStyles } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1,
     border: '1px solid',
     padding: theme.spacing(1),
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'grey',
   },
 }));
 
@@ -37,15 +39,14 @@ const BoxMain = ({ data }) => {
       <Typography variant="h6" gutterBottom>
         {data.title}
       </Typography>
-      <Typography variant="overline" display="block" gutterBottom>
-        {data.comments}
-      </Typography>
       <ClickAwayListener onClickAway={handleClickAway}>
         <div className={classes.root}>
-          <InfoIcon onClick={handleClick} className="info-btn" />
+          <IconButton aria-label="info" onClick={handleClick} size="small" className="info-btn">
+            <InfoOutlinedIcon fontSize="inherit" />
+          </IconButton>
           {open ? (
             <div className={classes.dropdown}>
-              Click me, I will stay visible until you click outside.
+              {data.comments ?? 'Нет комментария'}
             </div>
           ) : null}
         </div>

@@ -8,7 +8,6 @@ import eventsTypes from '../../constants/inarray'
 
 import BoxMain from '../../components/BoxMain'
 
-
 const Main = () => {
   const [open, setOpen] = useState(false)
   const [events, setEvents] = useState(false)
@@ -18,6 +17,9 @@ const Main = () => {
   }, {}))
 
   const handleEventAdd = (data) => {
+
+    console.log(data);
+
     const elements = []
     const adges = []
     setOpen(false)
@@ -30,11 +32,11 @@ const Main = () => {
       type: 'input',
       data: {
         label: <BoxMain data={main} />,
+        // label: main.title,
         comments: main.comments,
         date: main.date
       },
       draggable: false,
-      selectable: false,
       position: position,
       className: "inputEvent"
     }
@@ -130,6 +132,7 @@ const Main = () => {
           deadline: event.deadline,
           comments: event.comments,
         },
+        className: 'main-event',
         style: { backgroundColor: 'red', color: '#fff' },
         position: position
       }
@@ -141,14 +144,24 @@ const Main = () => {
       ...subEventsPool,
       ...adges
     ]
-    setEvents(test)
+    console.log(test);
+    setEvents(prevState => {
+      if (prevState.length) {
+        return [
+          ...prevState,
+          ...test
+        ]
+      } else {
+        return test
+      }
+    })
   }
 
   return (
     <Fragment>
       <div className="main-wrap">
         {events &&
-          <EventChain events={events} />
+          <EventChain events={events} newone={events.length}/>
         }
         <AddDialog
           open={open}
