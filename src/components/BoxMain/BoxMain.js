@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, memo } from 'react'
 import { Handle } from 'react-flow-renderer';
 
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
@@ -27,7 +27,6 @@ const BoxMain = ({ data }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  console.log(data);
   const handleClick = () => {
     setOpen((prev) => !prev);
   }
@@ -42,10 +41,9 @@ const BoxMain = ({ data }) => {
         type="target"
         position="left"
         style={{ background: '#555' }}
-        onConnect={(params) => console.log('handle onConnect', params)}
       />
       <Typography variant="h6" gutterBottom>
-        {data.title}
+        {data.label}
       </Typography>
       <ClickAwayListener onClickAway={handleClickAway}>
         <div className={classes.root}>
@@ -69,4 +67,4 @@ const BoxMain = ({ data }) => {
   )
 }
 
-export default BoxMain
+export default memo(BoxMain)

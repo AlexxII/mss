@@ -6,10 +6,13 @@ import ReactFlow, {
 import dagre from 'dagre';
 
 import BoxMain from '../BoxMain'
+import BoxIn from '../BoxIn'
+import BoxOut from '../BoxOut'
 
 const nodeTypes = {
-  input: BoxMain,
-  output: BoxMain
+  input: BoxIn,
+  mainEvent: BoxMain,
+  output: BoxOut
 };
 
 const nodeWidth = 200;
@@ -28,7 +31,6 @@ const getLayoutedElements = (elements) => {
     } else {
       dagreGraph.setEdge(el.source, el.target);
     }
-    console.log(el);
   });
 
   dagre.layout(dagreGraph);
@@ -54,7 +56,6 @@ const LayoutFlow = ({ events, newone }) => {
 
   const onLayout = useCallback(
     (events) => {
-      console.log(222);
       const layoutedElements = getLayoutedElements(events);
       setElements(layoutedElements);
     },

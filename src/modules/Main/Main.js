@@ -128,14 +128,14 @@ const Main = () => {
 
       return {
         id: event.id,
+        type: 'mainEvent',
         data: {
           eventId: event.type,
           label: eTypes[event.type].title,
           deadline: event.deadline,
           comments: event.comments,
+          complete: false
         },
-        type: 'sheetType',
-        className: 'main-event',
         style: { backgroundColor: 'red', color: '#fff' },
         position: position
       }
