@@ -5,7 +5,12 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-import initialElements from './elementsEx';
+import BoxMain from '../BoxMain'
+
+const nodeTypes = {
+  input: BoxMain,
+  output: BoxMain
+};
 
 const nodeWidth = 200;
 const nodeHeight = 76;
@@ -15,7 +20,6 @@ const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const getLayoutedElements = (elements) => {
-  console.log(elements);
   dagreGraph.setGraph({ rankdir: RANFDIR });
 
   elements.forEach((el) => {
@@ -24,6 +28,7 @@ const getLayoutedElements = (elements) => {
     } else {
       dagreGraph.setEdge(el.source, el.target);
     }
+    console.log(el);
   });
 
   dagre.layout(dagreGraph);
@@ -45,12 +50,11 @@ const getLayoutedElements = (elements) => {
 
 
 const LayoutFlow = ({ events, newone }) => {
-  const layoutedElements = getLayoutedElements(events);
-  const [elements, setElements] = useState(layoutedElements);
+  const [elements, setElements] = useState([]);
 
   const onLayout = useCallback(
     (events) => {
-      console.log('2222222222');
+      console.log(222);
       const layoutedElements = getLayoutedElements(events);
       setElements(layoutedElements);
     },
@@ -75,6 +79,7 @@ const LayoutFlow = ({ events, newone }) => {
     <div className="event-chain">
       <ReactFlow
         style={style}
+        nodeTypes={nodeTypes}
         elements={elements}
         connectionLineType="smoothstep"
         zoomIn={false}

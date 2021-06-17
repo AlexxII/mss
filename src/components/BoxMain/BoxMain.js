@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import InfoIcon from '@material-ui/icons/Info';
+import { Handle } from 'react-flow-renderer';
+
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Typography from '@material-ui/core/Typography';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -26,6 +27,7 @@ const BoxMain = ({ data }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
+  console.log(data);
   const handleClick = () => {
     setOpen((prev) => !prev);
   }
@@ -36,6 +38,12 @@ const BoxMain = ({ data }) => {
 
   return (
     <div className="main-box-wrap">
+      <Handle
+        type="target"
+        position="left"
+        style={{ background: '#555' }}
+        onConnect={(params) => console.log('handle onConnect', params)}
+      />
       <Typography variant="h6" gutterBottom>
         {data.title}
       </Typography>
@@ -51,6 +59,12 @@ const BoxMain = ({ data }) => {
           ) : null}
         </div>
       </ClickAwayListener>
+      <Handle
+        type="source"
+        position="right"
+        id="a"
+        style={{ background: '#555' }}
+      />
     </div>
   )
 }

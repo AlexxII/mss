@@ -1,12 +1,10 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 
 import SpeedAdd from '../../components/SpeedAdd'
 import AddDialog from '../../components/AddDialog'
 import EventChain from '../../components/EventChain'
 import { v4 as uuidv4 } from 'uuid';
 import eventsTypes from '../../constants/inarray'
-
-import BoxMain from '../../components/BoxMain'
 
 const Main = () => {
   const [open, setOpen] = useState(false)
@@ -16,10 +14,15 @@ const Main = () => {
     return acum
   }, {}))
 
+  useEffect(() => {
+    const rawData = localStorage.getItem('chain')
+    if (rawData) {
+      const chains = JSON.parse(rawData)
+      setEvents(chains)
+    }
+  }, [])
+
   const handleEventAdd = (data) => {
-
-    console.log(data);
-
     const elements = []
     const adges = []
     setOpen(false)
@@ -31,8 +34,7 @@ const Main = () => {
       id: uuidv4(),
       type: 'input',
       data: {
-        label: <BoxMain data={main} />,
-        // label: main.title,
+        label: main.title,
         comments: main.comments,
         date: main.date
       },
@@ -132,6 +134,7 @@ const Main = () => {
           deadline: event.deadline,
           comments: event.comments,
         },
+        type: 'sheetType',
         className: 'main-event',
         style: { backgroundColor: 'red', color: '#fff' },
         position: position
@@ -144,24 +147,24 @@ const Main = () => {
       ...subEventsPool,
       ...adges
     ]
-    console.log(test);
-    setEvents(prevState => {
-      if (prevState.length) {
-        return [
-          ...prevState,
-          ...test
-        ]
-      } else {
-        return test
-      }
-    })
+    let newEventsChain = []
+    if (events.length) {
+      newEventsChain = [
+        ...events,
+        ...test
+      ]
+    } else {
+      newEventsChain = test
+    }
+    setEvents(newEventsChain)
+    localStorage.setItem('chain', JSON.stringify(newEventsChain))
   }
 
   return (
     <Fragment>
       <div className="main-wrap">
         {events &&
-          <EventChain events={events} newone={events.length}/>
+          <EventChain events={events} newone={events.length} />
         }
         <AddDialog
           open={open}
