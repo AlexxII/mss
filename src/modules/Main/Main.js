@@ -1,9 +1,13 @@
 import React, { Fragment, useEffect, useState } from 'react'
 
-import SpeedAdd from '../../components/SpeedAdd'
-import AddDialog from '../../components/AddDialog'
-import EventChain from '../../components/EventChain'
 import { v4 as uuidv4 } from 'uuid';
+import Grid from '@material-ui/core/Grid';
+
+import SpeedAdd from '../../components/SpeedAdd'
+import EventChain from '../../components/EventChain'
+import AddDialog from '../../components/AddDialog'
+import Info from '../../components/Info'
+
 import eventsTypes from '../../constants/inarray'
 
 const Main = () => {
@@ -73,6 +77,7 @@ const Main = () => {
         })
         elements.push({
           id: shtId,
+          type: 'event',
           data: {
             label: 'ПТС'
           },
@@ -100,6 +105,7 @@ const Main = () => {
         })
         elements.push({
           id: tlfId,
+          type: 'event',
           data: {
             label: 'ШТ'
           },
@@ -129,6 +135,7 @@ const Main = () => {
       return {
         id: event.id,
         type: 'mainEvent',
+        className: 'main-event',
         data: {
           eventId: event.type,
           label: eTypes[event.type].title,
@@ -163,9 +170,21 @@ const Main = () => {
   return (
     <Fragment>
       <div className="main-wrap">
-        {events &&
-          <EventChain events={events} newone={events.length} />
-        }
+        <Grid container style={{ height: 'inherit' }}>
+          <Grid item xs={12} sm={9}>
+            <div className="flow-wrap">
+              {events &&
+                <EventChain events={events} newone={events.length} />
+              }
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <div className="info-wrap">
+              <Info />
+            </div>
+          </Grid>
+        </Grid>
+
         <AddDialog
           open={open}
           close={() => setOpen(false)}

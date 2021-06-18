@@ -1,10 +1,7 @@
-import React, { useState } from 'react'
+import React, { memo } from 'react'
 import { Handle } from 'react-flow-renderer';
 
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Typography from '@material-ui/core/Typography';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import IconButton from '@material-ui/core/IconButton';
 
 const BoxOut = ({ data }) => {
 
@@ -22,4 +19,4 @@ const BoxOut = ({ data }) => {
   )
 }
 
-export default BoxOut
+export default memo(BoxOut)

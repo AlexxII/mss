@@ -1,4 +1,35 @@
 .event-chain {
-  // display: flex;
   height: 100%;
 }
+
+.react-flow__node-mainEvent {
+  padding: 10px;
+  border-radius: 3px;
+  width: 150px;
+  font-size: 12px;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.react-flow__node-event {
+  padding: 10px;
+  border-radius: 3px;
+  width: 150px;
+  font-size: 12px;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.inputEvent {
+  cursor: pointer !important;
+  color: #fff !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  background-color: #1a5084 !important;
+}
+
+// main event #53585F
+// need to DO #EA5E5B
+// success #115C1D

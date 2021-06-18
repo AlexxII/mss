@@ -5,13 +5,15 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 import dagre from 'dagre';
 
-import BoxMain from '../BoxMain'
 import BoxIn from '../BoxIn'
 import BoxOut from '../BoxOut'
+import BoxMain from '../BoxMain'
+import BoxEvent from '../BoxEvent'
 
 const nodeTypes = {
   input: BoxIn,
   mainEvent: BoxMain,
+  event: BoxEvent,
   output: BoxOut
 };
 
@@ -45,7 +47,6 @@ const getLayoutedElements = (elements) => {
         y: nodeWithPosition.y - nodeHeight / 2,
       };
     }
-
     return el;
   });
 };

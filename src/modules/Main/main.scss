@@ -1,15 +1,10 @@
 .main-wrap {
-  // margin: 10px;
   height: 100%;
 }
-.inputEvent {
-  cursor: pointer !important;
-  color: #fff !important;
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  background-color: #1a5084 !important;
-  // input event #1A5084
+.flow-wrap {
+  height: 100%;
 }
-// main event #53585F
-// need to DO #EA5E5B
-// success #115C1D
+.info-wrap {
+  text-align: center;
+  height: inherit;
+}

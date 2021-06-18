@@ -40,7 +40,6 @@ const BoxMain = ({ data }) => {
       <Handle
         type="target"
         position="left"
-        style={{ background: '#555' }}
       />
       <Typography variant="h6" gutterBottom>
         {data.label}
