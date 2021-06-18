@@ -1,5 +1,6 @@
 import React, { Fragment, memo } from 'react'
 
+import eventsTypes from '../../constants/inarray'
 
 const Info = () => {
   return (
