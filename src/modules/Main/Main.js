@@ -256,7 +256,11 @@ const Main = () => {
       })
       return prevStateUp.filter(item => {
         if (isNode(item) && item.id === mainInput) {
-          if (getOutgoers(item, prevStateUp).length) return true
+          console.log(item)
+          console.log(getOutgoers(item, prevStateUp));
+          if (getOutgoers(item, prevStateUp).length) {
+            return true
+          }
           return false
         }
         return true
@@ -264,7 +268,7 @@ const Main = () => {
     })
     setEUpdate(prevState => (prevState + 1))
   }
-  
+
 
   return (
     <Fragment>

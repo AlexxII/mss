@@ -95,6 +95,8 @@ const AddDialog = ({ open, save, close }) => {
         onClose={handleClose}
         maxWidth={"sm"}
         fullWidth
+        disableBackdropClick
+        disableEscapeKeyDown
       >
         <form onSubmit={handleSave}>
           <DialogTitle style={{ padding: '16px 24px 0 24px' }} id="form-dialog-title">Добавить вводную</DialogTitle>
