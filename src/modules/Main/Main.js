@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 
 import { v4 as uuidv4 } from 'uuid';
 import Grid from '@material-ui/core/Grid';
-import { isNode } from 'react-flow-renderer';
+import { isNode, getOutgoers } from 'react-flow-renderer';
 
 import SpeedAdd from '../../components/SpeedAdd'
 import EventChain from '../../components/EventChain'
@@ -68,6 +68,7 @@ const Main = () => {
     const subEvents = data.subEvents
     const subEventsPool = subEvents.map((event, index) => {
       // основные
+      const idPool = []
       adges.push({
         id: `e${firstNode.id}`,
         source: firstNode.id,
@@ -75,9 +76,11 @@ const Main = () => {
         type: edgeType,
         animated: true
       })
+      idPool.push(`e${firstNode.id}`)
       // конец отработки
+      const outId = uuidv4()
       const endEvent = {
-        id: uuidv4(),
+        id: outId,
         type: 'output',
         className: "output-event",
         data: {
@@ -89,6 +92,7 @@ const Main = () => {
         draggable: false,
         position
       }
+      idPool.push(outId)
       // ПТС - ШТ
       if (event.shtReport) {
         const shtId = uuidv4()
@@ -100,6 +104,7 @@ const Main = () => {
           type: edgeType,
           animated: true
         })
+        idPool.push(`sht${event.id}`)
         elements.push({
           id: shtId,
           type: 'event',
@@ -113,6 +118,7 @@ const Main = () => {
           style: { backgroundColor: 'red', color: '#fff' },
           draggable: false
         })
+        idPool.push(shtId)
         // начало - ШТ
         adges.push({
           id: `tosht${event.id}`,
@@ -123,6 +129,7 @@ const Main = () => {
           label: 'Доклад',
           labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
         })
+        idPool.push(`tosht${event.id}`)
       }
       if (event.tlfReport) {
         const tlfId = uuidv4()
@@ -134,6 +141,7 @@ const Main = () => {
           type: edgeType,
           animated: true
         })
+        idPool.push(`tlf${firstNode.id}`)
         elements.push({
           id: tlfId,
           type: 'event',
@@ -146,6 +154,7 @@ const Main = () => {
           style: { backgroundColor: 'red', color: '#fff' },
           draggable: false
         })
+        idPool.push(tlfId)
         // начало - ПТС
         adges.push({
           id: `totlf${event.id}`,
@@ -156,6 +165,7 @@ const Main = () => {
           label: 'Доклад',
           labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
         })
+        idPool.push(`totlf${event.id}`)
       }
       if (!event.shtReport && !event.tlfReport) {
         adges.push({
@@ -165,10 +175,9 @@ const Main = () => {
           type: edgeType,
           animated: true
         })
+        idPool.push(`mtoend${event.id}`)
       }
-      elements.push(endEvent)
-
-      return {
+      const mainEvent = {
         id: event.id,
         type: 'mainEvent',
         className: 'main-event',
@@ -184,6 +193,16 @@ const Main = () => {
         position: position,
         draggable: false
       }
+      elements.push({
+        ...endEvent,
+        data: {
+          ...endEvent.data,
+          relativePool: idPool,
+          mainIn: firstNode.id
+        }
+      })
+      idPool.push(event.id)
+      return mainEvent
     })
     // цепочки
     const test = [
@@ -226,8 +245,26 @@ const Main = () => {
   }
 
   const handleDel = (data) => {
-    console.log('Del', data);
+    const relatives = data.relativePool
+    const mainInput = data.mainIn
+    setEvents(prevState => {
+      const prevStateUp = prevState.filter((item) => {
+        if (relatives.includes(item.id)) {
+          return false
+        }
+        return true
+      })
+      return prevStateUp.filter(item => {
+        if (isNode(item) && item.id === mainInput) {
+          if (getOutgoers(item, prevStateUp).length) return true
+          return false
+        }
+        return true
+      })
+    })
+    setEUpdate(prevState => (prevState + 1))
   }
+  
 
   return (
     <Fragment>
