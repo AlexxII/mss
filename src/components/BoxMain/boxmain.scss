@@ -1,9 +1,28 @@
 .main-box-wrap {
-  // position: relative;
+  margin: 10px !important;
+  padding: 0px !important;
+  .date {
+    font-size: 12px;
+    position: absolute;
+    top: 0;
+    left: 5px;
+  }
+  .date-complete {
+    font-size: 12px;
+    position: absolute;
+    bottom: 0;
+    left: 5px;
+  }
+  .service-wrap {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
 }
 .info-btn {
   color: #fff !important;
-  position: absolute !important;
-  bottom: -10px;
-  right: -5px;
+}
+.done-btn {
+  color: #fff !important;
 }

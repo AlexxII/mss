@@ -54,7 +54,6 @@ const getLayoutedElements = (elements) => {
 
 const LayoutFlow = ({ events, newone }) => {
   const [elements, setElements] = useState([]);
-
   const onLayout = useCallback(
     (events) => {
       const layoutedElements = getLayoutedElements(events);
@@ -83,6 +82,7 @@ const LayoutFlow = ({ events, newone }) => {
         style={style}
         nodeTypes={nodeTypes}
         elements={elements}
+        // onElementClick={handleEventClick}
         connectionLineType="smoothstep"
         zoomIn={false}
       />

@@ -1,69 +1,91 @@
-import React, { useState, memo } from 'react'
+import React, { Fragment, useState, memo, useEffect } from 'react'
 import { Handle } from 'react-flow-renderer';
+import moment from 'moment';
 
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Typography from '@material-ui/core/Typography';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { makeStyles } from '@material-ui/core/styles';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import Tooltip from '@material-ui/core/Tooltip';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    position: 'relative',
-  },
-  dropdown: {
-    position: 'absolute',
-    top: 28,
-    right: 0,
-    left: 0,
-    zIndex: 1,
-    border: '1px solid',
-    padding: theme.spacing(1),
-    backgroundColor: 'grey',
-  },
-}));
+import ConfirmDialog from '../../components/ConfirmDialog'
 
 const BoxMain = ({ data }) => {
-  const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const handleClick = () => {
-    setOpen((prev) => !prev);
+  console.log(data.complete);
+  useEffect(() => {
+    const till = moment(new Date(data.deadline))
+    const noww = new moment()
+    const dif = till.diff(noww, 'minutes')
+    console.log(dif);
+  }, [])
+
+  const handleInfoClick = () => {
+
   }
 
-  const handleClickAway = () => {
-    setOpen(false);
-  };
+  const handleDone = () => {
+    setOpen(true)
+  }
+
+  const handleConfirm = () => {
+    setOpen(false)
+    data.handleDone(data)
+  }
 
   return (
-    <div className="main-box-wrap">
-      <Handle
-        type="target"
-        position="left"
+    <Fragment>
+      <ConfirmDialog
+        open={open}
+        close={() => setOpen(false)}
+        confirm={handleConfirm}
+        header="Подтвердить"
+        message="Отметить как исполненное?"
       />
-      <Typography variant="h6" gutterBottom>
-        {data.label}
-      </Typography>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <div className={classes.root}>
-          <IconButton aria-label="info" onClick={handleClick} size="small" className="info-btn">
-            <InfoOutlinedIcon fontSize="inherit" />
-          </IconButton>
-          {open ? (
-            <div className={classes.dropdown}>
-              {data.comments ?? 'Нет комментария'}
-            </div>
-          ) : null}
-        </div>
-      </ClickAwayListener>
-      <Handle
-        type="source"
-        position="right"
-        id="a"
-        style={{ background: '#555' }}
-      />
-    </div>
+      <div className="main-box-wrap">
+        <Handle
+          type="target"
+          position="left"
+        />
+        {data.complete !== true &&
+          <Tooltip title="Время доклада" arrow placement="top">
+            <span className="date">{moment(new Date(data.deadline)).format("DD.MM.YYYY HH:mm")}</span>
+          </Tooltip>
+        }
+        {data.complete &&
+          <Tooltip title="Время завершения" arrow placement="bottom">
+            <span className="date-complete">{data.completeTime}</span>
+          </Tooltip>
+        }
+        <Typography variant="h6">
+          {data.label}
+        </Typography>
+        <span className="service-wrap">
+          {data.comments &&
+            <Tooltip title="Просмотр" arrow>
+              <IconButton aria-label="info" onClick={handleInfoClick} size="small" className="info-btn">
+                <InfoOutlinedIcon fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          }
+          {data.complete !== true &&
+            <Tooltip title="Выполнить" arrow>
+              <IconButton aria-label="info" onClick={handleDone} size="small" className="done-btn">
+                <CheckCircleOutlineIcon fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          }
+        </span>
+        <Handle
+          type="source"
+          position="right"
+          id="a"
+          style={{ background: '#555' }}
+        />
+      </div>
+    </Fragment>
   )
 }
 
-export default memo(BoxMain)
+export default BoxMain

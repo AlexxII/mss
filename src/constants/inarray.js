@@ -2,10 +2,10 @@ const eventsTypes = [
   {
     id: '1',
     title: 'ОСС',
-    comments: 'Организация специоальной связи',
+    comments: 'Организация специальной связи',
     responsible: {
-      person: '',
-      telephone: ''
+      person: 'Котенко К.В.',
+      telephone: 'АТС-ОГВ: (0812) 30-60'
     },
     order: 1
   },
@@ -14,8 +14,8 @@ const eventsTypes = [
     title: 'СИО',
     comments: 'Специальное информационное обеспечение',
     responsible: {
-      person: '',
-      telephone: ''
+      person: 'Врачев Д.С., Малышев В.Ю.',
+      telephone: 'АТС-ОГВ: (0812) 30-82'
     },
     order: 2
   },
@@ -24,8 +24,8 @@ const eventsTypes = [
     title: 'ИБ',
     comments: 'Информационная безопасность',
     responsible: {
-      person: '',
-      telephone: ''
+      person: 'Зиновьев Д.Н',
+      telephone: 'АТС-ОГВ (0812) 23-08'
     },
     order: 3
   },

@@ -22,13 +22,23 @@
 }
 
 .inputEvent {
-  cursor: pointer !important;
+  cursor: default !important;
   color: #fff !important;
   font-size: 18px !important;
   font-weight: 600 !important;
   background-color: #1a5084 !important;
 }
 
+.output-event {
+  cursor: default !important;
+  padding: 0 !important;
+}
+.simple-event {
+  cursor: default !important;
+}
+.main-event {
+  cursor: default !important;
+}
 // main event #53585F
 // need to DO #EA5E5B
 // success #115C1D

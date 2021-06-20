@@ -1,4 +1,5 @@
 import './App.scss';
+import 'animate.css'
 
 import Router from './router'
 

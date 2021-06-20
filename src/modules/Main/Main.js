@@ -2,17 +2,19 @@ import React, { Fragment, useEffect, useState } from 'react'
 
 import { v4 as uuidv4 } from 'uuid';
 import Grid from '@material-ui/core/Grid';
+import { isNode } from 'react-flow-renderer';
 
 import SpeedAdd from '../../components/SpeedAdd'
 import EventChain from '../../components/EventChain'
 import AddDialog from '../../components/AddDialog'
 import Info from '../../components/Info'
-
+import ConfirmDialog from '../../components/ConfirmDialog'
 import eventsTypes from '../../constants/inarray'
 
 const Main = () => {
   const [open, setOpen] = useState(false)
   const [events, setEvents] = useState(false)
+  const [eUpdate, setEUpdate] = useState(false)
   const [eTypes] = useState(eventsTypes.reduce((acum, item) => {
     acum[item.id] = item
     return acum
@@ -22,9 +24,26 @@ const Main = () => {
     const rawData = localStorage.getItem('chain')
     if (rawData) {
       const chains = JSON.parse(rawData)
-      setEvents(chains)
+      const chainX = chains.map(item => {
+        if (isNode(item)) {
+          return {
+            ...item,
+            data: {
+              ...item.data,
+              handleDone: handleDone,
+              handleDel: handleDel
+            }
+          }
+        }
+        return item
+      })
+      setEvents(chainX)
     }
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem('chain', JSON.stringify(events))
+  }, [events])
 
   const handleEventAdd = (data) => {
     const elements = []
@@ -40,7 +59,7 @@ const Main = () => {
       data: {
         label: main.title,
         comments: main.comments,
-        date: main.date
+        date: main.startDate
       },
       draggable: false,
       position: position,
@@ -60,8 +79,14 @@ const Main = () => {
       const endEvent = {
         id: uuidv4(),
         type: 'output',
-        data: { label: 'ФИНИШ' },
+        className: "output-event",
+        data: {
+          label: 'ФИНИШ',
+          complete: false,
+          handleDel: handleDel
+        },
         style: { backgroundColor: 'red', color: '#fff' },
+        draggable: false,
         position
       }
       // ПТС - ШТ
@@ -78,11 +103,15 @@ const Main = () => {
         elements.push({
           id: shtId,
           type: 'event',
+          className: 'simple-event',
           data: {
-            label: 'ПТС'
+            label: 'ПТС',
+            complete: false
+
           },
           position: position,
-          style: { backgroundColor: 'red', color: '#fff' }
+          style: { backgroundColor: 'red', color: '#fff' },
+          draggable: false
         })
         // начало - ШТ
         adges.push({
@@ -90,7 +119,9 @@ const Main = () => {
           source: event.id,
           target: shtId,
           type: edgeType,
-          animated: true
+          animated: true,
+          label: 'Доклад',
+          labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
         })
       }
       if (event.tlfReport) {
@@ -106,11 +137,14 @@ const Main = () => {
         elements.push({
           id: tlfId,
           type: 'event',
+          className: 'simple-event',
           data: {
-            label: 'ШТ'
+            label: 'ШТ',
+            complete: false
           },
           position: position,
-          style: { backgroundColor: 'red', color: '#fff' }
+          style: { backgroundColor: 'red', color: '#fff' },
+          draggable: false
         })
         // начало - ПТС
         adges.push({
@@ -118,7 +152,9 @@ const Main = () => {
           source: event.id,
           target: tlfId,
           type: edgeType,
-          animated: true
+          animated: true,
+          label: 'Доклад',
+          labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
         })
       }
       if (!event.shtReport && !event.tlfReport) {
@@ -137,14 +173,16 @@ const Main = () => {
         type: 'mainEvent',
         className: 'main-event',
         data: {
-          eventId: event.type,
+          eventId: event.id,
+          handleDone: handleDone,
           label: eTypes[event.type].title,
           deadline: event.deadline,
           comments: event.comments,
           complete: false
         },
         style: { backgroundColor: 'red', color: '#fff' },
-        position: position
+        position: position,
+        draggable: false
       }
     })
     // цепочки
@@ -164,17 +202,42 @@ const Main = () => {
       newEventsChain = test
     }
     setEvents(newEventsChain)
+    setEUpdate(prevState => (prevState + 1))
     localStorage.setItem('chain', JSON.stringify(newEventsChain))
+  }
+
+  const handleDone = (data) => {
+    setEvents(prevState => (
+      prevState.map((item, index) => {
+        if (isNode(item) && item.id === data.eventId) {
+          return {
+            ...item,
+            data: {
+              ...item.data,
+              complete: true,
+              completeTime: new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
+            }
+          }
+        }
+        return item
+      })
+    ))
+    setEUpdate(prevState => (prevState + 1))
+  }
+
+  const handleDel = (data) => {
+    console.log('Del', data);
   }
 
   return (
     <Fragment>
+      <ConfirmDialog />
       <div className="main-wrap">
         <Grid container style={{ height: 'inherit' }}>
           <Grid item xs={12} sm={9}>
             <div className="flow-wrap">
               {events &&
-                <EventChain events={events} newone={events.length} />
+                <EventChain events={events} newone={eUpdate} />
               }
             </div>
           </Grid>
