@@ -41,7 +41,7 @@ const BoxIn = ({ data }) => {
   const handleConfirm = () => {
     setOpen(false)
     setDelOpen(false)
-    data.handleDel(data)
+    data.handleMainDel(data)
   }
 
   const handleInfoClick = () => {
@@ -57,7 +57,6 @@ const BoxIn = ({ data }) => {
         header="Подтвердить удаление"
         message="Вы уверены, что хотите удалить ВСЮ вводную? Внимание! Эта операция не может быть отменена. Будьте внимательный."
       />
-
       <span className="date">{moment(new Date(data.date)).format("DD.MM.YYYY HH:mm")}</span>
       <Typography variant="h6">
         {data.label.length > 10 ?

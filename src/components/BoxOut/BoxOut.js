@@ -29,7 +29,7 @@ const BoxOut = ({ data }) => {
   const handleConfirm = () => {
     setOpen(false)
     setDelOpen(false)
-    data.handleDel(data)
+    data.handleChainDel(data)
   }
 
   return (

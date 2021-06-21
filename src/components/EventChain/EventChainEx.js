@@ -76,6 +76,10 @@ const LayoutFlow = ({ events, newone }) => {
     console.log(node);
   }
 
+  const onEdgeMouseEnter = (_, edge) => {
+    console.log(edge);
+  }
+
   return (
     <div className="event-chain">
       <ReactFlow
@@ -84,6 +88,7 @@ const LayoutFlow = ({ events, newone }) => {
         elements={elements}
         // onElementClick={handleEventClick}
         connectionLineType="smoothstep"
+        onEdgeMouseEnter={onEdgeMouseEnter}
         zoomIn={false}
       />
     </div>

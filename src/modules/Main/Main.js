@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 
 import { v4 as uuidv4 } from 'uuid';
 import Grid from '@material-ui/core/Grid';
-import { isNode, getOutgoers } from 'react-flow-renderer';
+import { isNode, getOutgoers, isEdge } from 'react-flow-renderer';
 
 import SpeedAdd from '../../components/SpeedAdd'
 import EventChain from '../../components/EventChain'
@@ -31,7 +31,8 @@ const Main = () => {
             data: {
               ...item.data,
               handleDone: handleDone,
-              handleDel: handleDel
+              handleChainDel: handleChainDel,
+              handleMainDel
             }
           }
         }
@@ -53,13 +54,16 @@ const Main = () => {
     const edgeType = 'straight';
     // события
     const main = data.main
+    const mainId = uuidv4()
     const firstNode = {
-      id: uuidv4(),
+      id: mainId,
       type: 'input',
       data: {
+        id: mainId,
         label: main.title,
         comments: main.comments,
-        date: main.startDate
+        date: main.startDate,
+        handleMainDel
       },
       draggable: false,
       position: position,
@@ -69,14 +73,15 @@ const Main = () => {
     const subEventsPool = subEvents.map((event, index) => {
       // основные
       const idPool = []
+      const mainEdgeId = `e${event.id}`
       adges.push({
-        id: `e${firstNode.id}`,
+        id: mainEdgeId,
         source: firstNode.id,
         target: event.id,
         type: edgeType,
         animated: true
       })
-      idPool.push(`e${firstNode.id}`)
+      // добавлять в пул не надо -> пойдет отельным полем у детей
       // конец отработки
       const outId = uuidv4()
       const endEvent = {
@@ -86,7 +91,7 @@ const Main = () => {
         data: {
           label: 'ФИНИШ',
           complete: false,
-          handleDel: handleDel
+          handleChainDel
         },
         style: { backgroundColor: 'red', color: '#fff' },
         draggable: false,
@@ -112,7 +117,6 @@ const Main = () => {
           data: {
             label: 'ПТС',
             complete: false
-
           },
           position: position,
           style: { backgroundColor: 'red', color: '#fff' },
@@ -135,13 +139,13 @@ const Main = () => {
         const tlfId = uuidv4()
         // ПТС - конец
         adges.push({
-          id: `tlf${firstNode.id}`,
+          id: `tlf${event.id}`,
           source: tlfId,
           target: endEvent.id,
           type: edgeType,
           animated: true
         })
-        idPool.push(`tlf${firstNode.id}`)
+        idPool.push(`tlf${event.id}`)
         elements.push({
           id: tlfId,
           type: 'event',
@@ -198,7 +202,8 @@ const Main = () => {
         data: {
           ...endEvent.data,
           relativePool: idPool,
-          mainIn: firstNode.id
+          mainIn: firstNode.id,
+          mainEdgeId
         }
       })
       idPool.push(event.id)
@@ -244,9 +249,11 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
-  const handleDel = (data) => {
+  const handleChainDel = (data) => {
     const relatives = data.relativePool
     const mainInput = data.mainIn
+    const mainEdgeId = data.mainEdgeId
+    let edgeDel = false
     setEvents(prevState => {
       const prevStateUp = prevState.filter((item) => {
         if (relatives.includes(item.id)) {
@@ -254,19 +261,42 @@ const Main = () => {
         }
         return true
       })
-      return prevStateUp.filter(item => {
+      const prevStateUpUp = prevStateUp.filter(item => {
         if (isNode(item) && item.id === mainInput) {
-          console.log(item)
-          console.log(getOutgoers(item, prevStateUp));
-          if (getOutgoers(item, prevStateUp).length) {
+          if (getOutgoers(item, prevState).length > 1) {
+            edgeDel = true
             return true
           }
+          edgeDel = true
           return false
         }
         return true
       })
+      if (edgeDel) {
+        return prevStateUpUp.filter(item => {
+          if (isEdge(item) && item.id === mainEdgeId) {
+            return false
+          }
+          return true
+        })
+      }
+      return prevStateUp
     })
     setEUpdate(prevState => (prevState + 1))
+  }
+
+  const handleMainDel = (data) => {
+    const itemId = data.id
+    setEvents(prevState => {
+      prevState.map(item => {
+        if (isNode(item) && item.id === itemId) {
+          console.log(getOutgoers(item, prevState))
+        }
+        return item
+      })
+      return prevState
+    })
+
   }
 
 
