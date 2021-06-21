@@ -13,7 +13,7 @@ import eventsTypes from '../../constants/inarray'
 
 const Main = () => {
   const [open, setOpen] = useState(false)
-  const [events, setEvents] = useState(false)
+  const [events, setEvents] = useState([])
   const [eUpdate, setEUpdate] = useState(false)
   const [eTypes] = useState(eventsTypes.reduce((acum, item) => {
     acum[item.id] = item
@@ -49,15 +49,10 @@ const Main = () => {
   }, [events])
 
   const handleEventAdd = (data) => {
-    const elements = []
-    const adges = []
     setOpen(false)
     const position = { x: 0, y: 0 };
-    const edgeType = 'straight';
-    // события
     const main = data.main
     const mainId = uuidv4()
-    let childsPool = []
     const firstNode = {
       id: mainId,
       type: 'input',
@@ -75,11 +70,7 @@ const Main = () => {
       className: "inputEvent"
     }
     const subEvents = data.subEvents
-    const subEventsPool = formElements(subEvents, mainId)
-
-
-    // цепочки
-
+    const { elementsPool, childsPool } = formElements(subEvents, mainId)
     const chains = [
       {
         ...firstNode,
@@ -88,37 +79,30 @@ const Main = () => {
           childsPool
         }
       },
-      ...elements,
-      ...subEventsPool,
-      ...adges
+      ...elementsPool
     ]
-
-    let newEventsChain = []
-    if (events.length) {
-      newEventsChain = [
-        ...events,
-        ...chains
-      ]
-    } else {
-      newEventsChain = chains
-    }
-    setEvents(newEventsChain)
+    setEvents(prevState => ([
+      ...prevState,
+      ...chains
+    ]))
     setEUpdate(prevState => (prevState + 1))
-    localStorage.setItem('chain', JSON.stringify(newEventsChain))
   }
 
-  const formElements = (subEvents, mainPool) => {
-    return subEvents.map((event, index) => {
+  const formElements = (subEvents, mainId) => {
+    const edgeType = 'straight';
+    const position = { x: 0, y: 0 };
+    const events = subEvents.reduce((acum, event) => {
+      const relativePool = []
       // основные
-      const idPool = []
       const mainEdgeId = `e${event.id}`
-      adges.push({
+      acum.push({
         id: mainEdgeId,
-        source: firstNode.id,
+        source: mainId,
         target: event.id,
         type: edgeType,
         animated: true
       })
+      relativePool.push(mainEdgeId)
       // добавлять в пул не надо -> пойдет отельным полем у детей
       // конец отработки
       const outId = uuidv4()
@@ -135,20 +119,21 @@ const Main = () => {
         draggable: false,
         position
       }
-      idPool.push(outId)
+      relativePool.push(outId)
       // ПТС - ШТ
       if (event.shtReport) {
         const shtId = uuidv4()
         // ШТ - конец
-        adges.push({
+        acum.push({
           id: `sht${event.id}`,
           source: shtId,
           target: endEvent.id,
           type: edgeType,
           animated: true
         })
-        idPool.push(`sht${event.id}`)
-        elements.push({
+        relativePool.push(`sht${event.id}`)
+
+        acum.push({
           id: shtId,
           type: 'event',
           className: 'simple-event',
@@ -160,9 +145,10 @@ const Main = () => {
           style: { backgroundColor: 'red', color: '#fff' },
           draggable: false
         })
-        idPool.push(shtId)
+        relativePool.push(shtId)
+
         // начало - ШТ
-        adges.push({
+        acum.push({
           id: `tosht${event.id}`,
           source: event.id,
           target: shtId,
@@ -171,20 +157,20 @@ const Main = () => {
           label: 'Доклад',
           labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
         })
-        idPool.push(`tosht${event.id}`)
+        relativePool.push(`tosht${event.id}`)
       }
       if (event.tlfReport) {
         const tlfId = uuidv4()
         // ПТС - конец
-        adges.push({
+        acum.push({
           id: `tlf${event.id}`,
           source: tlfId,
           target: endEvent.id,
           type: edgeType,
           animated: true
         })
-        idPool.push(`tlf${event.id}`)
-        elements.push({
+        relativePool.push(`tlf${event.id}`)
+        acum.push({
           id: tlfId,
           type: 'event',
           className: 'simple-event',
@@ -196,9 +182,9 @@ const Main = () => {
           style: { backgroundColor: 'red', color: '#fff' },
           draggable: false
         })
-        idPool.push(tlfId)
+        relativePool.push(tlfId)
         // начало - ПТС
-        adges.push({
+        acum.push({
           id: `totlf${event.id}`,
           source: event.id,
           target: tlfId,
@@ -207,19 +193,19 @@ const Main = () => {
           label: 'Доклад',
           labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
         })
-        idPool.push(`totlf${event.id}`)
+        relativePool.push(`totlf${event.id}`)
       }
       if (!event.shtReport && !event.tlfReport) {
-        adges.push({
+        acum.push({
           id: `mtoend${event.id}`,
           source: event.id,
           target: endEvent.id,
           type: edgeType,
           animated: true
         })
-        idPool.push(`mtoend${event.id}`)
+        relativePool.push(`mtoend${event.id}`)
       }
-      const mainEvent = {
+      acum.push({
         id: event.id,
         type: 'mainEvent',
         className: 'main-event',
@@ -234,24 +220,23 @@ const Main = () => {
         style: { backgroundColor: 'red', color: '#fff' },
         position: position,
         draggable: false
-      }
-      elements.push({
+      })
+      relativePool.push(event.id)
+      acum.push({
         ...endEvent,
         data: {
           ...endEvent.data,
-          relativePool: idPool,
-          mainIn: firstNode.id,
+          relativePool,
+          mainIn: mainId,
           mainEdgeId
         }
       })
-      idPool.push(event.id)
-      childsPool = [
-        ...childsPool,
-        ...idPool
-      ].push(mainEdgeId)
-      console.log(childsPool)
-      return mainEvent
-    })
+      return acum
+    }, [])
+    return {
+      elementsPool: events,
+      childsPool: events.map(item => item.id)
+    }
   }
 
   const handleDone = (data) => {
@@ -295,163 +280,11 @@ const Main = () => {
   const handleAddChain = (data) => {
     const subEvents = data.subEvents
     const mainId = data.mainId
-    const adges = []
-    const elements = []
-    const position = { x: 0, y: 0 };
-    const edgeType = 'straight';
-    let childsPool = []
-    const subEventsPool = subEvents.map(event => {
-      // основные
-      const idPool = []
-      const mainEdgeId = `e${event.id}`
-      adges.push({
-        id: mainEdgeId,
-        source: mainId,
-        target: event.id,
-        type: edgeType,
-        animated: true
-      })
-      // добавлять в пул не надо -> пойдет отельным полем у детей
-      // конец отработки
-      const outId = uuidv4()
-      const endEvent = {
-        id: outId,
-        type: 'output',
-        className: "output-event",
-        data: {
-          label: 'ФИНИШ',
-          complete: false,
-          handleChainDel
-        },
-        style: { backgroundColor: 'red', color: '#fff' },
-        draggable: false,
-        position
-      }
-      idPool.push(outId)
-      // ПТС - ШТ
-      if (event.shtReport) {
-        const shtId = uuidv4()
-        // ШТ - конец
-        adges.push({
-          id: `sht${event.id}`,
-          source: shtId,
-          target: endEvent.id,
-          type: edgeType,
-          animated: true
-        })
-        idPool.push(`sht${event.id}`)
-        elements.push({
-          id: shtId,
-          type: 'event',
-          className: 'simple-event',
-          data: {
-            label: 'ПТС',
-            complete: false
-          },
-          position: position,
-          style: { backgroundColor: 'red', color: '#fff' },
-          draggable: false
-        })
-        idPool.push(shtId)
-        // начало - ШТ
-        adges.push({
-          id: `tosht${event.id}`,
-          source: event.id,
-          target: shtId,
-          type: edgeType,
-          animated: true,
-          label: 'Доклад',
-          labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
-        })
-        idPool.push(`tosht${event.id}`)
-      }
-      if (event.tlfReport) {
-        const tlfId = uuidv4()
-        // ПТС - конец
-        adges.push({
-          id: `tlf${event.id}`,
-          source: tlfId,
-          target: endEvent.id,
-          type: edgeType,
-          animated: true
-        })
-        idPool.push(`tlf${event.id}`)
-        elements.push({
-          id: tlfId,
-          type: 'event',
-          className: 'simple-event',
-          data: {
-            label: 'ШТ',
-            complete: false
-          },
-          position: position,
-          style: { backgroundColor: 'red', color: '#fff' },
-          draggable: false
-        })
-        idPool.push(tlfId)
-        // начало - ПТС
-        adges.push({
-          id: `totlf${event.id}`,
-          source: event.id,
-          target: tlfId,
-          type: edgeType,
-          animated: true,
-          label: 'Доклад',
-          labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
-        })
-        idPool.push(`totlf${event.id}`)
-      }
-      if (!event.shtReport && !event.tlfReport) {
-        adges.push({
-          id: `mtoend${event.id}`,
-          source: event.id,
-          target: endEvent.id,
-          type: edgeType,
-          animated: true
-        })
-        idPool.push(`mtoend${event.id}`)
-      }
-      const mainEvent = {
-        id: event.id,
-        type: 'mainEvent',
-        className: 'main-event',
-        data: {
-          eventId: event.id,
-          handleDone: handleDone,
-          label: eTypes[event.type].title,
-          deadline: event.deadline,
-          comments: event.comments,
-          complete: false
-        },
-        style: { backgroundColor: 'red', color: '#fff' },
-        position: position,
-        draggable: false
-      }
-      elements.push({
-        ...endEvent,
-        data: {
-          ...endEvent.data,
-          relativePool: idPool,
-          mainIn: mainId,
-          mainEdgeId
-        }
-      })
-      idPool.push(event.id)
-      childsPool = [
-        ...childsPool,
-        ...idPool,
-      ].push(mainEdgeId)
-      return mainEvent
-    })
-    console.log(childsPool);
-    const pp = [
-      ...subEventsPool,
-      ...elements,
-      ...adges
-    ]
+    const { elementsPool, childsPool } = formElements(subEvents, mainId)
+    let newEvents = []
     setEvents(prevState => ([
       ...prevState,
-      ...pp
+      ...elementsPool
     ]))
     setEUpdate(prevState => (prevState + 1))
   }
@@ -494,13 +327,17 @@ const Main = () => {
 
   const handleMainDel = (data) => {
     console.log(data);
-    const itemId = data.id
+    const inId = data.id
+    const childsPool = data.childsPool
     setEvents(prevState => {
-      prevState.map(item => {
-
+      return prevState.filter(item => {
+        if (childsPool.includes(item.id) || item.id === inId) {
+          return false
+        }
+        return true
       })
-      return prevState
     })
+    setEUpdate(prevState => (prevState + 1))
   }
 
 
@@ -511,7 +348,7 @@ const Main = () => {
         <Grid container style={{ height: 'inherit' }}>
           <Grid item xs={12} sm={9}>
             <div className="flow-wrap">
-              {events &&
+              {events.length &&
                 <EventChain events={events} newone={eUpdate} />
               }
             </div>
