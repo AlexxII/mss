@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const actions = [
-  { icon: <SaveIcon />, name: 'Сохранить' },
+  { icon: <SaveIcon />, name: 'Добавить вводную' },
 ];
 
 const SpeedAdd = ({ setAddOpen }) => {

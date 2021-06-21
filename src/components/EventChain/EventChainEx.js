@@ -88,7 +88,7 @@ const LayoutFlow = ({ events, newone }) => {
         elements={elements}
         // onElementClick={handleEventClick}
         connectionLineType="smoothstep"
-        onEdgeMouseEnter={onEdgeMouseEnter}
+        // onEdgeMouseEnter={onEdgeMouseEnter}
         zoomIn={false}
       />
     </div>

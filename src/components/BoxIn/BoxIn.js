@@ -11,10 +11,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import ConfirmDialog from '../../components/ConfirmDialog'
+import UpdateInDialog from '../../components/UpdateInDialog'
+import AddChainDialog from '../../components/AddChainDialog'
 
 const BoxIn = ({ data }) => {
   const [open, setOpen] = useState(false)
   const [delOpen, setDelOpen] = useState(false)
+  const [updateOpen, setUpdateOpen] = useState(false)
+  const [addOpen, setAddOpen] = useState(false)
 
   const pointEnterP = () => {
     setOpen(true)
@@ -24,11 +28,23 @@ const BoxIn = ({ data }) => {
   }
 
   const handleAdd = () => {
+    setAddOpen(true)
+    setOpen(false)
+  }
 
+  const handleAddSave = (subEvents) => {
+    data.handleAddChain(subEvents)
+    setAddOpen(false)
   }
 
   const handleUpdate = () => {
+    setUpdateOpen(true)
+    setOpen(false)
+  }
 
+  const handleUpdateSave = (inData) => {
+    setUpdateOpen(false)
+    data.handleInUpdate(inData)
   }
 
   const handleDel = () => {
@@ -56,6 +72,18 @@ const BoxIn = ({ data }) => {
         confirm={handleConfirm}
         header="Подтвердить удаление"
         message="Вы уверены, что хотите удалить ВСЮ вводную? Внимание! Эта операция не может быть отменена. Будьте внимательный."
+      />
+      <UpdateInDialog
+        open={updateOpen}
+        close={() => setUpdateOpen(false)}
+        save={handleUpdateSave}
+        data={data}
+      />
+      <AddChainDialog
+        open={addOpen}
+        mainId={data.id}
+        close={() => setAddOpen(false)}
+        save={handleAddSave}
       />
       <span className="date">{moment(new Date(data.date)).format("DD.MM.YYYY HH:mm")}</span>
       <Typography variant="h6">

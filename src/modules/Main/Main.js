@@ -31,7 +31,9 @@ const Main = () => {
             data: {
               ...item.data,
               handleDone: handleDone,
-              handleChainDel: handleChainDel,
+              handleChainDel,
+              handleInUpdate,
+              handleAddChain,
               handleMainDel
             }
           }
@@ -63,7 +65,9 @@ const Main = () => {
         label: main.title,
         comments: main.comments,
         date: main.startDate,
-        handleMainDel
+        handleMainDel,
+        handleInUpdate,
+        handleAddChain
       },
       draggable: false,
       position: position,
@@ -249,6 +253,183 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
+  const handleInUpdate = (data) => {
+    setEvents(prevState => {
+      return prevState.map(item => item.id === data.id ?
+        {
+          ...item,
+          data: {
+            ...item.data,
+            label: data.title,
+            comments: data.comments,
+            date: data.inputTime
+          }
+        }
+        :
+        item
+      )
+    })
+    setEUpdate(prevState => (prevState + 1))
+  }
+
+  const handleAddChain = (data) => {
+    const subEvents = data.subEvents
+    const mainId = data.mainId
+    const adges = []
+    const elements = []
+    const position = { x: 0, y: 0 };
+    const edgeType = 'straight';
+    const subEventsPool = subEvents.map(event => {
+      // основные
+      const idPool = []
+      const mainEdgeId = `e${event.id}`
+      adges.push({
+        id: mainEdgeId,
+        source: mainId,
+        target: event.id,
+        type: edgeType,
+        animated: true
+      })
+      // добавлять в пул не надо -> пойдет отельным полем у детей
+      // конец отработки
+      const outId = uuidv4()
+      const endEvent = {
+        id: outId,
+        type: 'output',
+        className: "output-event",
+        data: {
+          label: 'ФИНИШ',
+          complete: false,
+          handleChainDel
+        },
+        style: { backgroundColor: 'red', color: '#fff' },
+        draggable: false,
+        position
+      }
+      idPool.push(outId)
+      // ПТС - ШТ
+      if (event.shtReport) {
+        const shtId = uuidv4()
+        // ШТ - конец
+        adges.push({
+          id: `sht${event.id}`,
+          source: shtId,
+          target: endEvent.id,
+          type: edgeType,
+          animated: true
+        })
+        idPool.push(`sht${event.id}`)
+        elements.push({
+          id: shtId,
+          type: 'event',
+          className: 'simple-event',
+          data: {
+            label: 'ПТС',
+            complete: false
+          },
+          position: position,
+          style: { backgroundColor: 'red', color: '#fff' },
+          draggable: false
+        })
+        idPool.push(shtId)
+        // начало - ШТ
+        adges.push({
+          id: `tosht${event.id}`,
+          source: event.id,
+          target: shtId,
+          type: edgeType,
+          animated: true,
+          label: 'Доклад',
+          labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
+        })
+        idPool.push(`tosht${event.id}`)
+      }
+      if (event.tlfReport) {
+        const tlfId = uuidv4()
+        // ПТС - конец
+        adges.push({
+          id: `tlf${event.id}`,
+          source: tlfId,
+          target: endEvent.id,
+          type: edgeType,
+          animated: true
+        })
+        idPool.push(`tlf${event.id}`)
+        elements.push({
+          id: tlfId,
+          type: 'event',
+          className: 'simple-event',
+          data: {
+            label: 'ШТ',
+            complete: false
+          },
+          position: position,
+          style: { backgroundColor: 'red', color: '#fff' },
+          draggable: false
+        })
+        idPool.push(tlfId)
+        // начало - ПТС
+        adges.push({
+          id: `totlf${event.id}`,
+          source: event.id,
+          target: tlfId,
+          type: edgeType,
+          animated: true,
+          label: 'Доклад',
+          labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
+        })
+        idPool.push(`totlf${event.id}`)
+      }
+      if (!event.shtReport && !event.tlfReport) {
+        adges.push({
+          id: `mtoend${event.id}`,
+          source: event.id,
+          target: endEvent.id,
+          type: edgeType,
+          animated: true
+        })
+        idPool.push(`mtoend${event.id}`)
+      }
+      const mainEvent = {
+        id: event.id,
+        type: 'mainEvent',
+        className: 'main-event',
+        data: {
+          eventId: event.id,
+          handleDone: handleDone,
+          label: eTypes[event.type].title,
+          deadline: event.deadline,
+          comments: event.comments,
+          complete: false
+        },
+        style: { backgroundColor: 'red', color: '#fff' },
+        position: position,
+        draggable: false
+      }
+      elements.push({
+        ...endEvent,
+        data: {
+          ...endEvent.data,
+          relativePool: idPool,
+          mainIn: mainId,
+          mainEdgeId
+        }
+      })
+      idPool.push(event.id)
+      return mainEvent
+    })
+    const pp = [
+      ...subEventsPool,
+      ...elements,
+      ...adges
+    ]
+    setEvents(prevState => ([
+      ...prevState,
+      ...pp
+    ]))
+    setEUpdate(prevState => (prevState + 1))
+  }
+
   const handleChainDel = (data) => {
     const relatives = data.relativePool
     const mainInput = data.mainIn
@@ -296,7 +477,6 @@ const Main = () => {
       })
       return prevState
     })
-
   }
 
 
