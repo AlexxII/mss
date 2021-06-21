@@ -1,0 +1,20 @@
+.event-box-wrap {
+  margin: 0px !important;
+  padding: 20px 10px 20px 10px !important;
+  .service-wrap {
+    display: flex;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+  .done-btn {
+    position: absolute;
+    top: -45px;
+    right: 0px;
+  }
+  .del-btn {
+    position: absolute;
+    top: -45px;
+    right: 35px;
+  }
+}

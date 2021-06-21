@@ -1,39 +1,8 @@
 .out-box-event {
-  padding: 10px !important;
-  cursor: pointer;
+  padding: 20px 10px 20px 10px !important;
   .del-btn {
     position: absolute;
     top: -45px;
-    right: 50px;
-  }
-}
-
-@import url("https://fonts.googleapis.com/css?family=Roboto+Slab:400,700");
-.blink {
-  animation-name: blinker;
-  animation-iteration-count: infinite;
-  animation-timing-function: cubic-bezier(1, 2, 0, 1);
-  animation-duration: 1s;
-  -webkit-animation-name: blinker;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-timing-function: cubic-bezier(1, 2, 0, 1);
-  -webkit-animation-duration: 1s;
-}
-
-@keyframes blinker {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@-webkit-keyframes blinker {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
+    right: 0px;
   }
 }

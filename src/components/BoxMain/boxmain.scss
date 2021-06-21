@@ -1,6 +1,6 @@
 .main-box-wrap {
-  margin: 10px !important;
-  padding: 0px !important;
+  margin: 0px !important;
+  padding: 20px 10px 20px 10px !important;
   .date {
     font-size: 12px;
     position: absolute;
@@ -8,6 +8,7 @@
     left: 5px;
   }
   .date-complete {
+    padding-bottom: 4px;
     font-size: 12px;
     position: absolute;
     bottom: 0;
@@ -19,10 +20,24 @@
     bottom: 0;
     right: 0;
   }
+  .done-btn {
+    position: absolute;
+    top: -45px;
+    right: 70px;
+  }
+  .add-btn {
+    position: absolute;
+    top: -45px;
+    right: 0px;
+  }
+  .update-btn {
+    position: absolute;
+    top: -45px;
+    right: 35px;
+  }
 }
 .info-btn {
   color: #fff !important;
 }
 .done-btn {
-  color: #fff !important;
 }

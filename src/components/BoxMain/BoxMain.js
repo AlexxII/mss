@@ -8,55 +8,91 @@ import IconButton from '@material-ui/core/IconButton';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import EditIcon from '@material-ui/icons/Edit';
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+
 import ConfirmDialog from '../../components/ConfirmDialog'
 
 const BoxMain = ({ data }) => {
   const [open, setOpen] = useState(false);
+  const [doneOpen, setDoneOpen] = useState(false)
 
-  console.log(data.complete);
+  const pointEnterP = () => {
+    setOpen(true)
+  }
+  const pointerLeaveP = () => {
+    setOpen(false)
+  }
+
   useEffect(() => {
     const till = moment(new Date(data.deadline))
     const noww = new moment()
     const dif = till.diff(noww, 'minutes')
-    console.log(dif);
   }, [])
+
+  const handleDel = () => {
+    // setDelOpen(true)
+    setTimeout(() => {
+      setOpen(false)
+    }, 150)
+  }
 
   const handleInfoClick = () => {
 
   }
 
   const handleDone = () => {
-    setOpen(true)
+    setDoneOpen(true)
   }
 
   const handleConfirm = () => {
-    setOpen(false)
+    setDoneOpen(false)
     data.handleDone(data)
   }
 
   return (
     <Fragment>
       <ConfirmDialog
-        open={open}
-        close={() => setOpen(false)}
+        open={doneOpen}
+        close={() => setDoneOpen(false)}
         confirm={handleConfirm}
         header="Подтвердить"
         message="Отметить как исполненное?"
       />
-      <div className="main-box-wrap">
+      <div className="main-box-wrap" onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
         <Handle
           type="target"
           position="left"
         />
         {data.complete !== true &&
-          <Tooltip title="Время доклада" arrow placement="top">
-            <span className="date">{moment(new Date(data.deadline)).format("DD.MM.YYYY HH:mm")}</span>
-          </Tooltip>
+          <span className="date">{moment(new Date(data.deadline)).format("DD.MM.YYYY HH:mm")}</span>
         }
         {data.complete &&
           <Tooltip title="Время завершения" arrow placement="bottom">
             <span className="date-complete">{data.completeTime}</span>
           </Tooltip>
+        }
+        {open &&
+          <Fragment>
+            <Tooltip title="Добавить" arrow placement="top">
+              <IconButton aria-label="info" onClick={() => { }} className="add-btn">
+                <AddCircleOutlineIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Редактировать" arrow placement="top">
+              <IconButton aria-label="info" onClick={() => { }} className="update-btn">
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+            {data.complete !== true &&
+              <Tooltip title="Отметить о выполнении" arrow placement="top">
+                <IconButton aria-label="info" onClick={handleDone} className="done-btn">
+                  <CheckCircleOutlineIcon />
+                </IconButton>
+              </Tooltip>
+            }
+          </Fragment>
         }
         <Typography variant="h6">
           {data.label}
@@ -66,13 +102,6 @@ const BoxMain = ({ data }) => {
             <Tooltip title="Просмотр" arrow>
               <IconButton aria-label="info" onClick={handleInfoClick} size="small" className="info-btn">
                 <InfoOutlinedIcon fontSize="inherit" />
-              </IconButton>
-            </Tooltip>
-          }
-          {data.complete !== true &&
-            <Tooltip title="Выполнить" arrow>
-              <IconButton aria-label="info" onClick={handleDone} size="small" className="done-btn">
-                <CheckCircleOutlineIcon fontSize="inherit" />
               </IconButton>
             </Tooltip>
           }
