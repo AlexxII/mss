@@ -215,7 +215,13 @@ const Main = () => {
     })
     // цепочки
     const test = [
-      firstNode,
+      {
+        ...firstNode,
+        data: {
+          ...firstNode.data,
+          childsPool
+        }
+      },
       ...elements,
       ...subEventsPool,
       ...adges
@@ -279,6 +285,7 @@ const Main = () => {
     const elements = []
     const position = { x: 0, y: 0 };
     const edgeType = 'straight';
+    const childsPool = []
     const subEventsPool = subEvents.map(event => {
       // основные
       const idPool = []
@@ -415,9 +422,14 @@ const Main = () => {
           mainEdgeId
         }
       })
+      childsPool = [
+        ...childsPool,
+        ...idPool,
+      ].push(mainEdgeId)
       idPool.push(event.id)
       return mainEvent
     })
+    console.log(childsPool);
     const pp = [
       ...subEventsPool,
       ...elements,
@@ -470,10 +482,7 @@ const Main = () => {
     const itemId = data.id
     setEvents(prevState => {
       prevState.map(item => {
-        if (isNode(item) && item.id === itemId) {
-          console.log(getOutgoers(item, prevState))
-        }
-        return item
+
       })
       return prevState
     })
