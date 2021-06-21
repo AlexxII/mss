@@ -57,6 +57,7 @@ const Main = () => {
     // события
     const main = data.main
     const mainId = uuidv4()
+    let childsPool = []
     const firstNode = {
       id: mainId,
       type: 'input',
@@ -74,7 +75,40 @@ const Main = () => {
       className: "inputEvent"
     }
     const subEvents = data.subEvents
-    const subEventsPool = subEvents.map((event, index) => {
+    const subEventsPool = formElements(subEvents, mainId)
+
+
+    // цепочки
+
+    const chains = [
+      {
+        ...firstNode,
+        data: {
+          ...firstNode.data,
+          childsPool
+        }
+      },
+      ...elements,
+      ...subEventsPool,
+      ...adges
+    ]
+
+    let newEventsChain = []
+    if (events.length) {
+      newEventsChain = [
+        ...events,
+        ...chains
+      ]
+    } else {
+      newEventsChain = chains
+    }
+    setEvents(newEventsChain)
+    setEUpdate(prevState => (prevState + 1))
+    localStorage.setItem('chain', JSON.stringify(newEventsChain))
+  }
+
+  const formElements = (subEvents, mainPool) => {
+    return subEvents.map((event, index) => {
       // основные
       const idPool = []
       const mainEdgeId = `e${event.id}`
@@ -211,33 +245,13 @@ const Main = () => {
         }
       })
       idPool.push(event.id)
+      childsPool = [
+        ...childsPool,
+        ...idPool
+      ].push(mainEdgeId)
+      console.log(childsPool)
       return mainEvent
     })
-    // цепочки
-    const test = [
-      {
-        ...firstNode,
-        data: {
-          ...firstNode.data,
-          childsPool
-        }
-      },
-      ...elements,
-      ...subEventsPool,
-      ...adges
-    ]
-    let newEventsChain = []
-    if (events.length) {
-      newEventsChain = [
-        ...events,
-        ...test
-      ]
-    } else {
-      newEventsChain = test
-    }
-    setEvents(newEventsChain)
-    setEUpdate(prevState => (prevState + 1))
-    localStorage.setItem('chain', JSON.stringify(newEventsChain))
   }
 
   const handleDone = (data) => {
@@ -285,7 +299,7 @@ const Main = () => {
     const elements = []
     const position = { x: 0, y: 0 };
     const edgeType = 'straight';
-    const childsPool = []
+    let childsPool = []
     const subEventsPool = subEvents.map(event => {
       // основные
       const idPool = []
@@ -422,11 +436,11 @@ const Main = () => {
           mainEdgeId
         }
       })
+      idPool.push(event.id)
       childsPool = [
         ...childsPool,
         ...idPool,
       ].push(mainEdgeId)
-      idPool.push(event.id)
       return mainEvent
     })
     console.log(childsPool);
@@ -479,6 +493,7 @@ const Main = () => {
   }
 
   const handleMainDel = (data) => {
+    console.log(data);
     const itemId = data.id
     setEvents(prevState => {
       prevState.map(item => {
