@@ -81,7 +81,7 @@ const BoxIn = ({ data }) => {
       />
       <AddChainDialog
         open={addOpen}
-        mainId={data.id}
+        inId={data.id}
         close={() => setAddOpen(false)}
         save={handleAddSave}
       />

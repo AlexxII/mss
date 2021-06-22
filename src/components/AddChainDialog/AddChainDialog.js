@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const AddChainDialog = ({ open, save, mainId, close }) => {
+const AddChainDialog = ({ open, save, inId, close }) => {
   const classes = useStyles();
   const [subEvents, setSubEvents] = useState(null)
 
@@ -43,7 +43,7 @@ const AddChainDialog = ({ open, save, mainId, close }) => {
       deadline: ''
     }])
     save({
-      mainId,
+      inId,
       subEvents
     })
   }

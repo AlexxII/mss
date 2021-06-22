@@ -88,7 +88,7 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
-  const formElements = (subEvents, mainId) => {
+  const formElements = (subEvents, inId) => {
     const edgeType = 'straight';
     const position = { x: 0, y: 0 };
     const events = subEvents.reduce((acum, event) => {
@@ -97,7 +97,7 @@ const Main = () => {
       const mainEdgeId = `e${event.id}`
       acum.push({
         id: mainEdgeId,
-        source: mainId,
+        source: inId,
         target: event.id,
         type: edgeType,
         animated: true
@@ -227,7 +227,7 @@ const Main = () => {
         data: {
           ...endEvent.data,
           relativePool,
-          mainIn: mainId,
+          mainIn: inId,
           mainEdgeId
         }
       })
@@ -279,13 +279,25 @@ const Main = () => {
 
   const handleAddChain = (data) => {
     const subEvents = data.subEvents
-    const mainId = data.mainId
-    const { elementsPool, childsPool } = formElements(subEvents, mainId)
-    let newEvents = []
-    setEvents(prevState => ([
-      ...prevState,
-      ...elementsPool
-    ]))
+    const inId = data.inId
+    const { elementsPool, childsPool } = formElements(subEvents, inId)
+    setEvents(prevState => {
+      let prevStateUp = prevState.map(item =>
+        item.id === inId ? {
+          ...item,
+          data: {
+            ...item.data,
+            childsPool: [
+              ...item.data.childsPool,
+              ...childsPool
+            ]
+          }
+        } : item)
+      return [
+        ...prevStateUp,
+        ...elementsPool
+      ]
+    })
     setEUpdate(prevState => (prevState + 1))
   }
 
@@ -326,7 +338,6 @@ const Main = () => {
   }
 
   const handleMainDel = (data) => {
-    console.log(data);
     const inId = data.id
     const childsPool = data.childsPool
     setEvents(prevState => {
@@ -348,8 +359,10 @@ const Main = () => {
         <Grid container style={{ height: 'inherit' }}>
           <Grid item xs={12} sm={9}>
             <div className="flow-wrap">
-              {events.length &&
+              {events.length ?
                 <EventChain events={events} newone={eUpdate} />
+                :
+                null
               }
             </div>
           </Grid>
