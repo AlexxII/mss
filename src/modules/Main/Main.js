@@ -10,15 +10,12 @@ import AddDialog from '../../components/AddDialog'
 import Info from '../../components/Info'
 import ConfirmDialog from '../../components/ConfirmDialog'
 import eventsTypes from '../../constants/inarray'
+import { updateLocale } from 'moment';
 
 const Main = () => {
   const [open, setOpen] = useState(false)
   const [events, setEvents] = useState([])
   const [eUpdate, setEUpdate] = useState(false)
-  const [eTypes] = useState(eventsTypes.reduce((acum, item) => {
-    acum[item.id] = item
-    return acum
-  }, {}))
 
   useEffect(() => {
     const rawData = localStorage.getItem('chain')
@@ -30,11 +27,12 @@ const Main = () => {
             ...item,
             data: {
               ...item.data,
-              handleDone: handleDone,
+              handleDone,
               handleChainDel,
               handleInUpdate,
               handleAddChain,
-              handleMainDel
+              handleMainDel,
+              handleMainUpdate
             }
           }
         }
@@ -70,6 +68,7 @@ const Main = () => {
       className: "inputEvent"
     }
     const subEvents = data.subEvents
+    console.log(subEvents);
     const { elementsPool, childsPool } = formElements(subEvents, mainId)
     const chains = [
       {
@@ -211,8 +210,9 @@ const Main = () => {
         className: 'main-event',
         data: {
           eventId: event.id,
-          handleDone: handleDone,
-          label: eTypes[event.type].title,
+          handleDone,
+          handleMainUpdate,
+          type: event.type,
           deadline: event.deadline,
           comments: event.comments,
           complete: false
@@ -274,6 +274,29 @@ const Main = () => {
         item
       )
     })
+    setEUpdate(prevState => (prevState + 1))
+  }
+
+  const handleMainUpdate = (uData) => {
+    let completeTime = false
+    if (uData.complete) {
+      completeTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
+    }
+    setEvents(prevState => (
+      prevState.map(item => item.id === uData.id ? {
+        ...item,
+        data: {
+          ...item.data,
+          type: uData.type,
+          deadline: uData.deadline,
+          complete: uData.complete,
+          completeTime: completeTime,
+          comments: uData.comments
+        }
+      }
+        : item
+      )
+    ))
     setEUpdate(prevState => (prevState + 1))
   }
 

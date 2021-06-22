@@ -63,7 +63,7 @@ const BoxIn = ({ data }) => {
   const handleInfoClick = () => {
 
   }
-
+  
   return (
     <div className="input-box-event" onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
       <ConfirmDialog

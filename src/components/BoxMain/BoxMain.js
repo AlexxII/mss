@@ -7,16 +7,23 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Tooltip from '@material-ui/core/Tooltip';
-
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
+import UpdateMainboxDialog from '../../components/UpdateMainboxDialog';
 import ConfirmDialog from '../../components/ConfirmDialog'
 
+import eventsTypes from '../../constants/inarray'
+
 const BoxMain = ({ data }) => {
+  const [eTypes] = useState(eventsTypes.reduce((acum, item) => {
+    acum[item.id] = item
+    return acum
+  }, {}))
+
   const [open, setOpen] = useState(false);
   const [doneOpen, setDoneOpen] = useState(false)
+  const [updateOpen, setUpdateOpen] = useState(false)
 
   const pointEnterP = () => {
     setOpen(true)
@@ -31,15 +38,19 @@ const BoxMain = ({ data }) => {
     const dif = till.diff(noww, 'minutes')
   }, [])
 
-  const handleDel = () => {
-    // setDelOpen(true)
-    setTimeout(() => {
-      setOpen(false)
-    }, 150)
-  }
+  if (!eTypes || !data) return null
 
   const handleInfoClick = () => {
 
+  }
+
+  const handleUpdate = () => {
+    setUpdateOpen(true)
+  }
+
+  const handleUpdateConfirm = (upData) => {
+    setUpdateOpen(false)
+    data.handleMainUpdate(upData)
   }
 
   const handleDone = () => {
@@ -59,6 +70,12 @@ const BoxMain = ({ data }) => {
         confirm={handleConfirm}
         header="Подтвердить"
         message="Отметить как исполненное?"
+      />
+      <UpdateMainboxDialog
+        open={updateOpen}
+        close={() => setUpdateOpen(false)}
+        save={handleUpdateConfirm}
+        data={data}
       />
       <div className="main-box-wrap" onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
         <Handle
@@ -81,7 +98,7 @@ const BoxMain = ({ data }) => {
               </IconButton>
             </Tooltip>
             <Tooltip title="Редактировать" arrow placement="top">
-              <IconButton aria-label="info" onClick={() => { }} className="update-btn">
+              <IconButton aria-label="info" onClick={handleUpdate} className="update-btn">
                 <EditIcon />
               </IconButton>
             </Tooltip>
@@ -95,7 +112,7 @@ const BoxMain = ({ data }) => {
           </Fragment>
         }
         <Typography variant="h6">
-          {data.label}
+          {eTypes[data.type].title}
         </Typography>
         <span className="service-wrap">
           {data.comments &&

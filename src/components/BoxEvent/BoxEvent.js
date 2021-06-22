@@ -53,6 +53,11 @@ const BoxEvent = ({ data }) => {
         type="target"
         position="left"
       />
+      {data.complete &&
+        <Tooltip title="Время завершения" arrow placement="bottom">
+          <span className="date-complete">{data.completeTime}</span>
+        </Tooltip>
+      }
       <Typography variant="h6">
         {data.label}
       </Typography>
