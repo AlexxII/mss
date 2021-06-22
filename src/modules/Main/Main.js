@@ -2,15 +2,13 @@ import React, { Fragment, useEffect, useState } from 'react'
 
 import { v4 as uuidv4 } from 'uuid';
 import Grid from '@material-ui/core/Grid';
-import { isNode, getOutgoers, isEdge } from 'react-flow-renderer';
+import { isNode, getOutgoers, isEdge, removeElements } from 'react-flow-renderer';
 
 import SpeedAdd from '../../components/SpeedAdd'
 import EventChain from '../../components/EventChain'
 import AddDialog from '../../components/AddDialog'
 import Info from '../../components/Info'
 import ConfirmDialog from '../../components/ConfirmDialog'
-import eventsTypes from '../../constants/inarray'
-import { updateLocale } from 'moment';
 
 const Main = () => {
   const [open, setOpen] = useState(false)
@@ -32,7 +30,9 @@ const Main = () => {
               handleInUpdate,
               handleAddChain,
               handleMainDel,
-              handleMainUpdate
+              handleMainUpdate,
+              handleSimpleEventDone,
+              handleSimpleEventDel
             }
           }
         }
@@ -46,16 +46,18 @@ const Main = () => {
     localStorage.setItem('chain', JSON.stringify(events))
   }, [events])
 
+
   const handleEventAdd = (data) => {
     setOpen(false)
     const position = { x: 0, y: 0 };
     const main = data.main
-    const mainId = uuidv4()
+    const inId = uuidv4()
     const firstNode = {
-      id: mainId,
+      id: inId,
       type: 'input',
       data: {
-        id: mainId,
+        id: inId,
+        inId,
         label: main.title,
         comments: main.comments,
         date: main.startDate,
@@ -68,8 +70,7 @@ const Main = () => {
       className: "inputEvent"
     }
     const subEvents = data.subEvents
-    console.log(subEvents);
-    const { elementsPool, childsPool } = formElements(subEvents, mainId)
+    const { elementsPool, childsPool } = formElements(subEvents, inId)
     const chains = [
       {
         ...firstNode,
@@ -112,6 +113,8 @@ const Main = () => {
         data: {
           label: 'ФИНИШ',
           complete: false,
+          inId,
+          outId,
           handleChainDel
         },
         style: { backgroundColor: 'red', color: '#fff' },
@@ -137,8 +140,13 @@ const Main = () => {
           type: 'event',
           className: 'simple-event',
           data: {
+            id: shtId,
             label: 'ПТС',
-            complete: false
+            complete: false,
+            inId,
+            outId,
+            handleSimpleEventDone,
+            handleSimpleEventDel
           },
           position: position,
           style: { backgroundColor: 'red', color: '#fff' },
@@ -174,8 +182,13 @@ const Main = () => {
           type: 'event',
           className: 'simple-event',
           data: {
+            id: tlfId,
             label: 'ШТ',
-            complete: false
+            complete: false,
+            inId,
+            outId,
+            handleSimpleEventDone,
+            handleSimpleEventDel
           },
           position: position,
           style: { backgroundColor: 'red', color: '#fff' },
@@ -210,12 +223,14 @@ const Main = () => {
         className: 'main-event',
         data: {
           eventId: event.id,
+          complete: false,
+          inId,
+          outId,
           handleDone,
           handleMainUpdate,
           type: event.type,
           deadline: event.deadline,
-          comments: event.comments,
-          complete: false
+          comments: event.comments
         },
         style: { backgroundColor: 'red', color: '#fff' },
         position: position,
@@ -255,6 +270,35 @@ const Main = () => {
         return item
       })
     ))
+    setEUpdate(prevState => (prevState + 1))
+  }
+
+  const handleSimpleEventDone = (id) => {
+    setEvents(prevState => (
+      prevState.map((item, index) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            data: {
+              ...item.data,
+              complete: true,
+              completeTime: new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
+            }
+          }
+        }
+        return item
+      })
+    ))
+    setEUpdate(prevState => (prevState + 1))
+  }
+
+  const handleSimpleEventDel = (id) => {
+    setEvents(prevState => {
+      const delNode = prevState.filter(item => item.id === id)
+      const prevStateUp = removeElements(delNode, prevState)
+      console.log(prevStateUp);
+      return prevStateUp
+    })
     setEUpdate(prevState => (prevState + 1))
   }
 
@@ -324,6 +368,61 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
+  const genRandString = () => {
+    return Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4)
+  }
+
+  const handleNewEdge = (source, target) => {
+    const edgeId = 'u_' + genRandString() + '_' + source
+    const edgeType = 'straight';
+    const newEdge = [{
+      id: edgeId,
+      source: source,
+      target: target,
+      type: edgeType,
+      animated: true,
+      labelStyle: { fill: 'red', fontWeight: 700, fontSize: '12px' },
+    }]
+    const inId = events.filter(item => item.id === source)[0].data.inId
+    const outId = events.filter(item => item.id === target)[0].data.outId
+    setEvents(prevState => {
+      const prevStateUp = prevState.map(item => {
+        if (isNode(item) && item.id === inId) {
+          return {
+            ...item,
+            data: {
+              ...item.data,
+              childsPool: [
+                ...item.data.childsPool,
+                edgeId
+              ]
+            }
+          }
+        }
+        return item
+      }).map(item => {
+        if (isNode(item) && item.id === outId) {
+          return {
+            ...item,
+            data: {
+              ...item.data,
+              relativePool: [
+                ...item.data.relativePool,
+                edgeId
+              ]
+            }
+          }
+        }
+        return item
+      })
+      return [
+        ...prevStateUp,
+        ...newEdge
+      ]
+    })
+    setEUpdate(prevState => (prevState + 1))
+  }
+
   const handleChainDel = (data) => {
     const relatives = data.relativePool
     const mainInput = data.mainIn
@@ -383,7 +482,7 @@ const Main = () => {
           <Grid item xs={12} sm={9}>
             <div className="flow-wrap">
               {events.length ?
-                <EventChain events={events} newone={eUpdate} />
+                <EventChain events={events} newone={eUpdate} setEvents={setEvents} newEdge={handleNewEdge} />
                 :
                 null
               }

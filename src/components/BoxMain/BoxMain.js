@@ -116,7 +116,7 @@ const BoxMain = ({ data }) => {
         </Typography>
         <span className="service-wrap">
           {data.comments &&
-            <Tooltip title="Просмотр" arrow>
+            <Tooltip title={data.comments} arrow>
               <IconButton aria-label="info" onClick={handleInfoClick} size="small" className="info-btn">
                 <InfoOutlinedIcon fontSize="inherit" />
               </IconButton>

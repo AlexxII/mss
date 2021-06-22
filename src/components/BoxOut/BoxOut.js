@@ -14,10 +14,7 @@ const BoxOut = ({ data }) => {
 
   const handleDel = () => {
     setDelOpen(true)
-    setTimeout(() => {
-      setOpen(false)
-    }, 150)
-
+    setOpen(false)
   }
   const pointEnterP = () => {
     setOpen(true)
@@ -27,7 +24,6 @@ const BoxOut = ({ data }) => {
   }
 
   const handleConfirm = () => {
-    setOpen(false)
     setDelOpen(false)
     data.handleChainDel(data)
   }

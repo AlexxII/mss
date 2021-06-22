@@ -52,7 +52,7 @@ const getLayoutedElements = (elements) => {
 };
 
 
-const LayoutFlow = ({ events, newone }) => {
+const LayoutFlow = ({ events, newone, setEvents, newEdge }) => {
   const [elements, setElements] = useState([]);
   const onLayout = useCallback(
     (events) => {
@@ -80,6 +80,11 @@ const LayoutFlow = ({ events, newone }) => {
     console.log(edge);
   }
 
+  const onConnect = ({ source, target }) => {
+    console.log(source, target);
+    newEdge(source, target)
+  }
+
   return (
     <div className="event-chain">
       <ReactFlow
@@ -89,6 +94,7 @@ const LayoutFlow = ({ events, newone }) => {
         // onElementClick={handleEventClick}
         connectionLineType="smoothstep"
         // onEdgeMouseEnter={onEdgeMouseEnter}
+        onConnect={onConnect}
         zoomIn={false}
       />
     </div>
