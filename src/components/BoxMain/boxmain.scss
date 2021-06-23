@@ -3,6 +3,7 @@
   padding: 20px 10px 20px 10px !important;
   .date {
     font-size: 12px;
+    font-size: 12px;
     position: absolute;
     top: 0;
     left: 5px;
@@ -40,4 +41,7 @@
   color: #fff !important;
 }
 .done-btn {
+}
+.done {
+  background-color: #115C1D;
 }

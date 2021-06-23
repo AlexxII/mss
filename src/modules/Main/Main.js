@@ -14,6 +14,7 @@ const Main = () => {
   const [open, setOpen] = useState(false)
   const [events, setEvents] = useState([])
   const [eUpdate, setEUpdate] = useState(false)
+  const [colorUpdate, setColorUpdate] = useState(false)
 
   useEffect(() => {
     const rawData = localStorage.getItem('chain')
@@ -32,7 +33,8 @@ const Main = () => {
               handleMainDel,
               handleMainUpdate,
               handleSimpleEventDone,
-              handleSimpleEventDel
+              handleSimpleEventDel,
+              handleUndoDone
             }
           }
         }
@@ -45,6 +47,52 @@ const Main = () => {
   useEffect(() => {
     localStorage.setItem('chain', JSON.stringify(events))
   }, [events])
+
+
+  useEffect(() => {
+    // проверить исполнение
+    const outPuts = events.filter(item => item.type === 'output')
+    const updateChains = outPuts.reduce((acum, item) => {
+      const relativesIds = item.data.relativePool
+      const outId = item.id
+      const relativeNodes = events.filter(item =>
+        isNode(item) && relativesIds.includes(item.id) && item.id !== outId
+      ).filter(item => item.data.complete !== true)
+      if (!relativeNodes.length) {
+        acum.completed.push(item.id)
+      } else {
+        acum.unComleted.push(item.id)
+      }
+      return acum
+    }, {
+      completed: [],
+      unComleted: []
+    })
+    setEvents(prevState => prevState.map(item => {
+      if (updateChains.completed.includes(item.id)) {
+        return {
+          ...item,
+          data: {
+            ...item.data,
+            complete: true,
+            label: 'Исполнено'
+          }
+        }
+      }
+      if (updateChains.unComleted.includes(item.id)) {
+        return {
+          ...item,
+          data: {
+            ...item.data,
+            complete: false,
+            label: 'Исполнение'
+          }
+        }
+      }
+      return item
+    }))
+    setColorUpdate(prevState => prevState + 1)
+  }, [eUpdate])
 
 
   const handleEventAdd = (data) => {
@@ -111,7 +159,7 @@ const Main = () => {
         type: 'output',
         className: "output-event",
         data: {
-          label: 'ФИНИШ',
+          label: 'Исполнение',
           complete: false,
           inId,
           outId,
@@ -146,7 +194,8 @@ const Main = () => {
             inId,
             outId,
             handleSimpleEventDone,
-            handleSimpleEventDel
+            handleSimpleEventDel,
+            handleUndoDone
           },
           position: position,
           style: { backgroundColor: 'red', color: '#fff' },
@@ -188,7 +237,8 @@ const Main = () => {
             inId,
             outId,
             handleSimpleEventDone,
-            handleSimpleEventDel
+            handleSimpleEventDel,
+            handleUndoDone
           },
           position: position,
           style: { backgroundColor: 'red', color: '#fff' },
@@ -273,9 +323,27 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
+  const handleUndoDone = (id) => {
+    setEvents(prevState =>
+      prevState.map(item => item.id === id ?
+        {
+          ...item,
+          data: {
+            ...item.data,
+            complete: false,
+            completeTime: false
+          }
+        }
+        :
+        item
+      )
+    )
+    setEUpdate(prevState => (prevState + 1))
+  }
+
   const handleSimpleEventDone = (id) => {
     setEvents(prevState => (
-      prevState.map((item, index) => {
+      prevState.map(item => {
         if (item.id === id) {
           return {
             ...item,
@@ -482,7 +550,12 @@ const Main = () => {
           <Grid item xs={12} sm={9}>
             <div className="flow-wrap">
               {events.length ?
-                <EventChain events={events} newone={eUpdate} setEvents={setEvents} newEdge={handleNewEdge} />
+                <EventChain
+                  events={events}
+                  newone={eUpdate}
+                  colorUpdate={colorUpdate}
+                  newEdge={handleNewEdge}
+                />
                 :
                 null
               }

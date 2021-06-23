@@ -77,7 +77,7 @@ const BoxMain = ({ data }) => {
         save={handleUpdateConfirm}
         data={data}
       />
-      <div className="main-box-wrap" onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
+      <div className={data.complete ? "main-box-wrap done" : "main-box-wrap"} onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
         <Handle
           type="target"
           position="left"
@@ -104,7 +104,7 @@ const BoxMain = ({ data }) => {
             </Tooltip>
             {data.complete !== true &&
               <Tooltip title="Отметить о выполнении" arrow placement="top">
-                <IconButton aria-label="info" onClick={handleDone} className="done-btn">
+                <IconButton aria-label="info" onClick={handleConfirm} className="done-btn">
                   <CheckCircleOutlineIcon />
                 </IconButton>
               </Tooltip>

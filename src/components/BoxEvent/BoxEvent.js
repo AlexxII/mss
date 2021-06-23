@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-
+import UndoIcon from '@material-ui/icons/Undo';
 import ConfirmDialog from '../../components/ConfirmDialog'
 
 const BoxEvent = ({ data }) => {
@@ -46,8 +46,12 @@ const BoxEvent = ({ data }) => {
     setOpen(false)
   }
 
+  const handleUndoDone = () => {
+    data.handleUndoDone(data.id)
+  }
+
   return (
-    <div className="event-box-wrap" onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
+    <div className={data.complete ? "event-box-wrap done" : "event-box-wrap"} onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
       <ConfirmDialog
         open={doneOpen}
         close={() => setDoneOpen(false)}
@@ -78,8 +82,15 @@ const BoxEvent = ({ data }) => {
         <Fragment>
           {data.complete !== true &&
             <Tooltip title="Отметить о выполнении" arrow placement="left">
-              <IconButton aria-label="info" onClick={handleDone} className="done-btn">
+              <IconButton aria-label="info" onClick={handleDoneConfirn} className="done-btn">
                 <CheckCircleOutlineIcon />
+              </IconButton>
+            </Tooltip>
+          }
+          {data.complete &&
+            <Tooltip title="Отменить исполнение" arrow placement="left">
+              <IconButton aria-label="info" onClick={handleUndoDone} className="done-btn">
+                <UndoIcon />
               </IconButton>
             </Tooltip>
           }

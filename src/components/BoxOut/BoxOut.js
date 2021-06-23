@@ -29,7 +29,7 @@ const BoxOut = ({ data }) => {
   }
 
   return (
-    <div className="out-box-event" onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
+    <div className={data.complete ? "out-box-event done" : "out-box-event"} onPointerEnter={pointEnterP} onPointerLeave={pointerLeaveP}>
       <ConfirmDialog
         open={delOpen}
         close={() => setDelOpen(false)}

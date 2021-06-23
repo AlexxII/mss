@@ -52,7 +52,7 @@ const getLayoutedElements = (elements) => {
 };
 
 
-const LayoutFlow = ({ events, newone, setEvents, newEdge }) => {
+const LayoutFlow = ({ events, newone, colorUpdate, newEdge }) => {
   const [elements, setElements] = useState([]);
   const onLayout = useCallback(
     (events) => {
@@ -64,7 +64,7 @@ const LayoutFlow = ({ events, newone, setEvents, newEdge }) => {
 
   useEffect(() => {
     onLayout(events)
-  }, [newone])
+  }, [newone, colorUpdate])
 
   const style = {
     background: '#fff',
@@ -81,7 +81,6 @@ const LayoutFlow = ({ events, newone, setEvents, newEdge }) => {
   }
 
   const onConnect = ({ source, target }) => {
-    console.log(source, target);
     newEdge(source, target)
   }
 
