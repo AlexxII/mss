@@ -10,11 +10,13 @@ import Tooltip from '@material-ui/core/Tooltip';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import UndoIcon from '@material-ui/icons/Undo';
 import ConfirmDialog from '../../components/ConfirmDialog'
+import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 
 const BoxEvent = ({ data }) => {
   const [open, setOpen] = useState(false);
   const [doneOpen, setDoneOpen] = useState(false)
   const [delOpen, setDelOpen] = useState(false)
+  const [addOpen, setAddOpen] = useState(false)
   const pointEnterP = () => {
     setOpen(true)
   }
@@ -46,6 +48,10 @@ const BoxEvent = ({ data }) => {
     setOpen(false)
   }
 
+  const handleAdd = () => {
+
+  }
+
   const handleUndoDone = () => {
     data.handleUndoDone(data.id)
   }
@@ -72,7 +78,7 @@ const BoxEvent = ({ data }) => {
       />
       {data.complete &&
         <Tooltip title="Время доклада" arrow placement="bottom">
-          <span className="date-complete">{data.completeTime}</span>
+          <span className="date-complete">{data.completeTime.slice(0, -3)}</span>
         </Tooltip>
       }
       <Typography variant="h6">
@@ -102,6 +108,13 @@ const BoxEvent = ({ data }) => {
         </Fragment>
       }
       <span className="service-wrap">
+        {data.inTime &&
+          <Tooltip title={`Получен - ${data.inTime}`} arrow>
+            <IconButton aria-label="info" onClick={() => { }} size="small" className="time-btn">
+              <QueryBuilderIcon fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
+        }
         {data.comments &&
           <Tooltip title={data.comments}>
             <IconButton aria-label="info" onClick={handleInfoClick} size="small" className="info-btn">
@@ -109,7 +122,6 @@ const BoxEvent = ({ data }) => {
             </IconButton>
           </Tooltip>
         }
-
       </span>
       <Handle
         type="source"

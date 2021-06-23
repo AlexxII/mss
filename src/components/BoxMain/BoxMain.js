@@ -9,9 +9,11 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import Tooltip from '@material-ui/core/Tooltip';
 import EditIcon from '@material-ui/icons/Edit';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 
 import UpdateMainboxDialog from '../../components/UpdateMainboxDialog';
 import ConfirmDialog from '../../components/ConfirmDialog'
+import AddEventsDialog from '../../components/AddEventsDialog'
 
 import eventsTypes from '../../constants/inarray'
 
@@ -20,9 +22,9 @@ const BoxMain = ({ data }) => {
     acum[item.id] = item
     return acum
   }, {}))
-
   const [open, setOpen] = useState(false);
   const [doneOpen, setDoneOpen] = useState(false)
+  const [addOpen, setAddOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
 
   const pointEnterP = () => {
@@ -42,6 +44,22 @@ const BoxMain = ({ data }) => {
 
   const handleInfoClick = () => {
 
+  }
+
+  const handleAdd = () => {
+    setAddOpen(true)
+  }
+
+  const handleAddConfirm = (events) => {
+    setAddOpen(false)
+    data.handleEventAdd({
+      parent: {
+        source: data.id,
+        inId: data.inId,
+        outId: data.outId
+      },
+      events
+    })
   }
 
   const handleUpdate = () => {
@@ -64,6 +82,11 @@ const BoxMain = ({ data }) => {
 
   return (
     <Fragment>
+      <AddEventsDialog
+        open={addOpen}
+        save={handleAddConfirm}
+        close={() => setAddOpen(false)}
+      />
       <ConfirmDialog
         open={doneOpen}
         close={() => setDoneOpen(false)}
@@ -87,13 +110,13 @@ const BoxMain = ({ data }) => {
         }
         {data.complete &&
           <Tooltip title="Время завершения" arrow placement="bottom">
-            <span className="date-complete">{data.completeTime}</span>
+            <span className="date-complete">{data.completeTime.slice(0, -3)}</span>
           </Tooltip>
         }
         {open &&
           <Fragment>
             <Tooltip title="Добавить" arrow placement="top">
-              <IconButton aria-label="info" onClick={() => { }} className="add-btn">
+              <IconButton aria-label="info" onClick={handleAdd} className="add-btn">
                 <AddCircleOutlineIcon />
               </IconButton>
             </Tooltip>
@@ -115,6 +138,13 @@ const BoxMain = ({ data }) => {
           {eTypes[data.type].title}
         </Typography>
         <span className="service-wrap">
+          {data.inTime &&
+            <Tooltip title={`Получен - ${data.inTime}`} arrow>
+              <IconButton aria-label="info" onClick={() => { }} size="small" className="time-btn">
+                <QueryBuilderIcon fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          }
           {data.comments &&
             <Tooltip title={data.comments} arrow>
               <IconButton aria-label="info" onClick={handleInfoClick} size="small" className="info-btn">

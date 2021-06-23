@@ -39,7 +39,7 @@ const UpdateMainboxDialog = ({ open, save, data, close }) => {
   useEffect(() => {
     if (open) {
       setEventData({
-        id: data.eventId,
+        id: data.id,
         type: data.type,
         deadline: data.deadline,
         comments: data.comments,

@@ -51,7 +51,6 @@ const AddDialog = ({ open, save, data, close }) => {
     close()
   }
 
-
   return (
     <div>
       <Dialog

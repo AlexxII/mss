@@ -26,6 +26,7 @@ const Main = () => {
             ...item,
             data: {
               ...item.data,
+              handleEventAdd,
               handleDone,
               handleChainDel,
               handleInUpdate,
@@ -34,7 +35,7 @@ const Main = () => {
               handleMainUpdate,
               handleSimpleEventDone,
               handleSimpleEventDel,
-              handleUndoDone
+              handleUndoDone,
             }
           }
         }
@@ -95,7 +96,7 @@ const Main = () => {
   }, [eUpdate])
 
 
-  const handleEventAdd = (data) => {
+  const handleEventAddMain = (data) => {
     setOpen(false)
     const position = { x: 0, y: 0 };
     const main = data.main
@@ -139,6 +140,7 @@ const Main = () => {
   const formElements = (subEvents, inId) => {
     const edgeType = 'straight';
     const position = { x: 0, y: 0 };
+    const inTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
     const events = subEvents.reduce((acum, event) => {
       const relativePool = []
       // основные
@@ -191,8 +193,10 @@ const Main = () => {
             id: shtId,
             label: 'ПТС',
             complete: false,
+            inTime, 
             inId,
             outId,
+            handleEventAdd,
             handleSimpleEventDone,
             handleSimpleEventDel,
             handleUndoDone
@@ -234,8 +238,10 @@ const Main = () => {
             id: tlfId,
             label: 'ШТ',
             complete: false,
+            inTime,
             inId,
             outId,
+            handleEventAdd,
             handleSimpleEventDone,
             handleSimpleEventDel,
             handleUndoDone
@@ -272,15 +278,17 @@ const Main = () => {
         type: 'mainEvent',
         className: 'main-event',
         data: {
-          eventId: event.id,
+          id: event.id,
           complete: false,
+          inTime,
           inId,
           outId,
+          handleEventAdd,
           handleDone,
           handleMainUpdate,
           type: event.type,
-          deadline: event.deadline,
-          comments: event.comments
+          dealine: event.deadline,
+          comdments: event.comments
         },
         style: { backgroundColor: 'red', color: '#fff' },
         position: position,
@@ -306,8 +314,8 @@ const Main = () => {
 
   const handleDone = (data) => {
     setEvents(prevState => (
-      prevState.map((item, index) => {
-        if (isNode(item) && item.id === data.eventId) {
+      prevState.map(item => {
+        if (isNode(item) && item.id === data.id) {
           return {
             ...item,
             data: {
@@ -391,6 +399,7 @@ const Main = () => {
 
   const handleMainUpdate = (uData) => {
     let completeTime = false
+    console.log(uData);
     if (uData.complete) {
       completeTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
     }
@@ -435,6 +444,11 @@ const Main = () => {
     })
     setEUpdate(prevState => (prevState + 1))
   }
+
+  const handleEventAdd = (events) => {
+    console.log(events);
+  }
+
 
   const genRandString = () => {
     return Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4)
@@ -567,11 +581,10 @@ const Main = () => {
             </div>
           </Grid>
         </Grid>
-
         <AddDialog
           open={open}
           close={() => setOpen(false)}
-          save={handleEventAdd}
+          save={handleEventAddMain}
         />
         <SpeedAdd setAddOpen={() => setOpen(true)} />
       </div>
