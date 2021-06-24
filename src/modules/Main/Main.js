@@ -193,7 +193,7 @@ const Main = () => {
             id: shtId,
             label: 'ПТС',
             complete: false,
-            inTime, 
+            inTime,
             inId,
             outId,
             handleEventAdd,
@@ -287,7 +287,7 @@ const Main = () => {
           handleDone,
           handleMainUpdate,
           type: event.type,
-          dealine: event.deadline,
+          deadline: event.deadline,
           comdments: event.comments
         },
         style: { backgroundColor: 'red', color: '#fff' },
@@ -372,7 +372,6 @@ const Main = () => {
     setEvents(prevState => {
       const delNode = prevState.filter(item => item.id === id)
       const prevStateUp = removeElements(delNode, prevState)
-      console.log(prevStateUp);
       return prevStateUp
     })
     setEUpdate(prevState => (prevState + 1))
@@ -399,7 +398,6 @@ const Main = () => {
 
   const handleMainUpdate = (uData) => {
     let completeTime = false
-    console.log(uData);
     if (uData.complete) {
       completeTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
     }
@@ -577,6 +575,7 @@ const Main = () => {
           </Grid>
           <Grid item xs={12} sm={3}>
             <div className="info-wrap">
+              <span className="animate__pulse">Проверка</span>
               <Info />
             </div>
           </Grid>

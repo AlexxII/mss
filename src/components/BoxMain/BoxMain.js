@@ -26,6 +26,8 @@ const BoxMain = ({ data }) => {
   const [doneOpen, setDoneOpen] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
   const [updateOpen, setUpdateOpen] = useState(false)
+  const [timer, setTimer] = useState(false)
+  const [timeAlert, setTimeAlert] = useState(false)
 
   const pointEnterP = () => {
     setOpen(true)
@@ -35,12 +37,28 @@ const BoxMain = ({ data }) => {
   }
 
   useEffect(() => {
-    const till = moment(new Date(data.deadline))
-    const noww = new moment()
-    const dif = till.diff(noww, 'minutes')
-  }, [])
+    setTimer(countDiffDuration(data.deadline))
+    setTimeout(() => {
+      setTimer(countDiffDuration(data.deadline))
+    }, 1000 * 60)
+  })
 
   if (!eTypes || !data) return null
+
+  const countDiffDuration = (end) => {
+    const till = moment(new Date(end))
+    const curTime = new moment()
+    const duration = moment.duration(till.diff(curTime))
+    const milSec = duration.asMilliseconds()
+    if (milSec < 660000) {
+      setTimeAlert(true)
+    } else {
+      setTimeAlert(false)
+    }
+    const hours = parseInt(duration.asHours())
+    const minutes = parseInt(duration.asMinutes()) % 60
+    return hours ? `${hours} ч ${minutes} мин` : `${minutes} мин`
+  }
 
   const handleInfoClick = () => {
 
@@ -134,6 +152,9 @@ const BoxMain = ({ data }) => {
             }
           </Fragment>
         }
+        {(open || timeAlert) && data.complete !== true &&
+          <div className={timeAlert ? "timer alert" : "timer"}>{timer}</div>
+        }
         <Typography variant="h6">
           {eTypes[data.type].title}
         </Typography>
@@ -164,4 +185,4 @@ const BoxMain = ({ data }) => {
   )
 }
 
-export default BoxMain
+export default memo(BoxMain)

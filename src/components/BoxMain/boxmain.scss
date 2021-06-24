@@ -36,6 +36,27 @@
     top: -45px;
     right: 35px;
   }
+  .timer {
+    color: #000;
+    font-size: 14px;
+    position: absolute;
+    bottom: -25px;
+    right: 0;
+    font-weight: 500;
+    opacity: 0.6;
+  }
+  .alert {
+    color: red;
+    font-weight: 700;
+    animation-name: blinker;
+    animation-iteration-count: infinite;
+    animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    animation-duration: 2s;
+    -webkit-animation-name: blinker;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: cubic-bezier(1, 0, 0, 1);
+    -webkit-animation-duration: 2s;
+  }
 }
 .info-btn {
   color: #fff !important;
@@ -46,5 +67,17 @@
 .done-btn {
 }
 .done {
-  background-color: #115C1D;
+  background-color: #115c1d;
+}
+@keyframes blinker {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes blinker {
+  from { opacity: 1.0; }
+  to { opacity: 0.0; }
 }
