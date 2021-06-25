@@ -443,7 +443,48 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
-  const handleEventAdd = (events) => {
+  const handleEventAdd = ({ parent, events }) => {
+    const edgeType = 'straight';
+    const position = { x: 0, y: 0 };
+    const inTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
+
+    const elements = events.reduce((acum, event) => {
+      const mainEdgeId = `e${event.id}`
+      if (parent.direction) {
+        acum.push({
+          id: mainEdgeId,
+          source: parent.source,
+          target: event.id,
+          type: edgeType,
+          animated: true
+        })
+      } else {
+        acum.push({
+          id: mainEdgeId,
+          source: event.id,
+          target: parent.source,
+          type: edgeType,
+          animated: true
+        })
+      }
+      const uEvent = {
+        id: event.id,
+        type: 'user-event',
+        className: "user-event",
+        data: {
+          label: event.title,
+          complete: false,
+          inId: parent.inId,
+          outId: parent.outId,
+          handleChainDel
+        },
+        style: { backgroundColor: 'red', color: '#fff' },
+        draggable: false,
+        position
+      }
+    })
+
+    console.log(parent);
     console.log(events);
   }
 
@@ -575,7 +616,6 @@ const Main = () => {
           </Grid>
           <Grid item xs={12} sm={3}>
             <div className="info-wrap">
-              <span className="animate__pulse">Проверка</span>
               <Info />
             </div>
           </Grid>

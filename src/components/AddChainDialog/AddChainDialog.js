@@ -5,8 +5,8 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import FormControl from '@material-ui/core/FormControl';
 import { makeStyles } from '@material-ui/core/styles';
+
 import { v4 as uuidv4 } from 'uuid';
 
 import SubEventForm from '../SubEventForm'
@@ -96,10 +96,10 @@ const AddChainDialog = ({ open, save, inId, close }) => {
           <DialogActions>
             <Button onClick={handleClose} color="primary">
               Отмена
-          </Button>
+            </Button>
             <Button type="submit" color="primary">
               Сохранить
-          </Button>
+            </Button>
           </DialogActions>
         </form>
       </Dialog>

@@ -68,13 +68,14 @@ const BoxMain = ({ data }) => {
     setAddOpen(true)
   }
 
-  const handleAddConfirm = (events) => {
+  const handleAddConfirm = ({ events, direction }) => {
     setAddOpen(false)
     data.handleEventAdd({
       parent: {
         source: data.id,
         inId: data.inId,
-        outId: data.outId
+        outId: data.outId,
+        direction
       },
       events
     })
