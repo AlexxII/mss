@@ -2,7 +2,13 @@ import React, { Fragment, useEffect, useState } from 'react'
 
 import { v4 as uuidv4 } from 'uuid';
 import Grid from '@material-ui/core/Grid';
-import { isNode, getOutgoers, isEdge, removeElements } from 'react-flow-renderer';
+import {
+  isNode,
+  getOutgoers,
+  isEdge,
+  removeElements,
+  getIncomers
+} from 'react-flow-renderer';
 
 import SpeedAdd from '../../components/SpeedAdd'
 import EventChain from '../../components/EventChain'
@@ -443,12 +449,17 @@ const Main = () => {
     setEUpdate(prevState => (prevState + 1))
   }
 
-  const handleEventAdd = ({ parent, events }) => {
+  const handleEventAdd = ({ parent, uEvents }) => {
+    // необходимо получить источник(и) и получателя(ей)
+    const parentItem = events.filter(item => item.id === parent.source)[0]
+    const outElements = getOutgoers(parentItem, events)
+    const inElements = getIncomers(parentItem, events)
+
     const edgeType = 'straight';
     const position = { x: 0, y: 0 };
     const inTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
 
-    const elements = events.reduce((acum, event) => {
+    const elements = uEvents.reduce((acum, event) => {
       const mainEdgeId = `e${event.id}`
       if (parent.direction) {
         acum.push({
@@ -467,6 +478,30 @@ const Main = () => {
           animated: true
         })
       }
+      // DOTO удалить предыдущий маршрут
+
+
+      // ПТС - ШТ
+      if (event.shtReport) {
+        const shtId = uuidv4()
+        // ШТ - конец
+        acum.push({
+          id: `sht${event.id}`,
+          source: shtId,
+          target: '2222',
+          type: edgeType,
+          animated: true
+        })
+
+
+      }
+      if (event.tlfReport) {
+
+
+
+      }
+
+
       const uEvent = {
         id: event.id,
         type: 'user-event',
@@ -482,10 +517,11 @@ const Main = () => {
         draggable: false,
         position
       }
-    })
+      return acum
+    }, [])
 
-    console.log(parent);
-    console.log(events);
+    // console.log(parent);
+    // console.log(uEvents);
   }
 
 

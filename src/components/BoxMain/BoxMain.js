@@ -77,7 +77,7 @@ const BoxMain = ({ data }) => {
         outId: data.outId,
         direction
       },
-      events
+      uEvents: events
     })
   }
 
