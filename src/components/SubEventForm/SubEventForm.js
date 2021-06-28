@@ -139,7 +139,7 @@ const SubEventForm = ({ first, setSubEvents, eventData, index }) => {
         >
           <option aria-label="None" value="" />
           {eventsTypes.map(option => (
-            <option key={option.id} value={option.id}>{option.title}</option>
+            <option key={option.id} value={option.id}> {option.title} - {option.comments}</option>
           ))}
         </NativeSelect>
       </FormControl>

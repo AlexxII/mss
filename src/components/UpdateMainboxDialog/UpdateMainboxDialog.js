@@ -106,7 +106,7 @@ const UpdateMainboxDialog = ({ open, save, data, close }) => {
               >
                 <option aria-label="None" value="" />
                 {eventsTypes.map(option => (
-                  <option key={option.id} value={option.id}>{option.title}</option>
+                  <option key={option.id} value={option.id}> {option.title} - {option.comments}</option>
                 ))}
               </NativeSelect>
             </FormControl>
