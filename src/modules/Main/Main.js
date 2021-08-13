@@ -295,7 +295,7 @@ const Main = () => {
           handleMainUpdate,
           type: event.type,
           deadline: event.deadline,
-          comdments: event.comments
+          comments: event.comments
         },
         style: { backgroundColor: 'red', color: '#fff' },
         position: position,
@@ -452,21 +452,27 @@ const Main = () => {
 
   const handleEventAdd = ({ parent, uEvents }) => {
     // необходимо получить источник(и) и получателя(ей)
-    console.log(parent);
-    console.log(uEvents);
+    let events = []
+    // жесткий колхоз !! - получение событий
+    setEvents(prevState => {
+      prevState.map(event => {
+        events.push(event)
+        return event
+      })
+      return prevState
+    })
     const parentItem = events.filter(item => item.id === parent.source)[0]
-
-    console.log(events);
-    console.log(parentItem);
-
-
     const outElements = getOutgoers(parentItem, events)
     const inElements = getIncomers(parentItem, events)
+
+    console.log(outElements);
+    console.log(inElements);
+    console.log(uEvents);
 
     const edgeType = 'straight';
     const position = { x: 0, y: 0 };
     const inTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
-
+    
     const elements = uEvents.reduce((acum, event) => {
       const mainEdgeId = `e${event.id}`
       if (parent.direction) {
@@ -486,8 +492,7 @@ const Main = () => {
           animated: true
         })
       }
-      // DOTO удалить предыдущий маршрут
-
+      // TODO удалить предыдущий маршрут
 
       // ПТС - ШТ
       if (event.shtReport) {
