@@ -103,6 +103,7 @@ const Main = () => {
 
 
   const handleEventAddMain = (data) => {
+    console.log(data);
     setOpen(false)
     const position = { x: 0, y: 0 };
     const main = data.main
@@ -451,7 +452,14 @@ const Main = () => {
 
   const handleEventAdd = ({ parent, uEvents }) => {
     // необходимо получить источник(и) и получателя(ей)
+    console.log(parent);
+    console.log(uEvents);
     const parentItem = events.filter(item => item.id === parent.source)[0]
+
+    console.log(events);
+    console.log(parentItem);
+
+
     const outElements = getOutgoers(parentItem, events)
     const inElements = getIncomers(parentItem, events)
 

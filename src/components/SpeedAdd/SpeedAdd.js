@@ -7,7 +7,7 @@ import SaveIcon from '@material-ui/icons/Save';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
-    position: 'absolute',
+    position: 'fixed',
     bottom: theme.spacing(5),
     right: theme.spacing(5),
   },
