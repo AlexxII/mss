@@ -95,6 +95,7 @@ const LayoutFlow = ({ events, newone, colorUpdate, newEdge }) => {
         // onEdgeMouseEnter={onEdgeMouseEnter}
         onConnect={onConnect}
         zoomIn={false}
+        // zoomOnScroll={false}
       />
     </div>
   );

@@ -103,7 +103,6 @@ const Main = () => {
 
 
   const handleEventAddMain = (data) => {
-    console.log(data);
     setOpen(false)
     const position = { x: 0, y: 0 };
     const main = data.main
@@ -451,7 +450,6 @@ const Main = () => {
   }
 
   const handleEventAdd = ({ parent, uEvents }) => {
-    // необходимо получить источник(и) и получателя(ей)
     let events = []
     // жесткий колхоз !! - получение событий
     setEvents(prevState => {
@@ -461,82 +459,77 @@ const Main = () => {
       })
       return prevState
     })
+    // необходимо получить источник(и) и получателя(ей)
     const parentItem = events.filter(item => item.id === parent.source)[0]
     const outElements = getOutgoers(parentItem, events)
     const inElements = getIncomers(parentItem, events)
 
+    console.log(parent);
     console.log(outElements);
     console.log(inElements);
     console.log(uEvents);
+    console.log(events);
 
     const edgeType = 'straight';
     const position = { x: 0, y: 0 };
     const inTime = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" })
-    
+
+    //получение массива получателей и источников
+    const outIds = outElements.map(event => event.id)
+    const inIds = inElements.map(event => event.id)
+    console.log(outIds)
+    console.log(inIds)
+
     const elements = uEvents.reduce((acum, event) => {
-      const mainEdgeId = `e${event.id}`
+      const userEdgeId = `u${event.id}`
       if (parent.direction) {
-        acum.push({
-          id: mainEdgeId,
+        acum.edges.push({
+          id: userEdgeId,
           source: parent.source,
           target: event.id,
           type: edgeType,
           animated: true
         })
       } else {
-        acum.push({
-          id: mainEdgeId,
+        acum.edges.push({
+          id: userEdgeId,
           source: event.id,
           target: parent.source,
           type: edgeType,
           animated: true
         })
       }
-      // TODO удалить предыдущий маршрут
-
       // ПТС - ШТ
       if (event.shtReport) {
         const shtId = uuidv4()
         // ШТ - конец
-        acum.push({
+        acum.edges.push({
           id: `sht${event.id}`,
           source: shtId,
-          target: '2222',
+          target: '22222',
+          label: 'Доклад',
           type: edgeType,
           animated: true
         })
-
-
       }
       if (event.tlfReport) {
-
-
-
+        const tlfId = uuidv4()
+        // ШТ - конец
+        acum.edges.push({
+          id: `sht${event.id}`,
+          source: tlfId,
+          target: '3333333',
+          label: 'Доклад',
+          type: edgeType,
+          animated: true
+        })
       }
 
-
-      const uEvent = {
-        id: event.id,
-        type: 'user-event',
-        className: "user-event",
-        data: {
-          label: event.title,
-          complete: false,
-          inId: parent.inId,
-          outId: parent.outId,
-          handleChainDel
-        },
-        style: { backgroundColor: 'red', color: '#fff' },
-        draggable: false,
-        position
-      }
-      return acum
-    }, [])
-
-    // console.log(parent);
-    // console.log(uEvents);
+    }, {
+      edges: [],
+      events: []
+    })
   }
-
 
   const genRandString = () => {
     return Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4)
